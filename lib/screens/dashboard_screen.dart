@@ -63,7 +63,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.blueAccent,
-
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
