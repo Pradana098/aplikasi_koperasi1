@@ -8,22 +8,18 @@ class RiwayatTransaksiScreen extends StatelessWidget {
     {"tanggal": "2025-03-10", "keterangan": "Angsuran", "jumlah": 500000},
   ];
 
-  final currencyFormatter = NumberFormat.currency(
-    locale: 'id_ID',
-    symbol: 'Rp ',
-    decimalDigits: 0,
-  );
+  final currencyFormatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
   Icon getIcon(String keterangan) {
     switch (keterangan.toLowerCase()) {
       case "simpanan pokok":
-        return Icon(Icons.savings, color: Colors.green);
+        return Icon(Icons.savings_rounded, color: Colors.green, size: 30);
       case "pinjaman":
-        return Icon(Icons.money_off, color: Colors.redAccent);
+        return Icon(Icons.money_off_csred_rounded, color: Colors.redAccent, size: 30);
       case "angsuran":
-        return Icon(Icons.payment, color: Colors.blue);
+        return Icon(Icons.payments_rounded, color: Colors.blueAccent, size: 30);
       default:
-        return Icon(Icons.receipt_long, color: Colors.grey);
+        return Icon(Icons.receipt_long, color: Colors.grey, size: 30);
     }
   }
 
@@ -40,87 +36,145 @@ class RiwayatTransaksiScreen extends StatelessWidget {
     }
   }
 
+  int getTotalSaldo() {
+     return riwayatTransaksi.fold(0, (total, trx) => total + (trx["jumlah"] as int));;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
+      backgroundColor: Color(0xFFF2F4F8),
       appBar: AppBar(
-        title: Text("Riwayat Transaksi"),
+        title: const Text("Riwayat Transaksi"),
         backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: ListView.builder(
-          itemCount: riwayatTransaksi.length,
-          itemBuilder: (context, index) {
-            var transaksi = riwayatTransaksi[index];
-            var jumlah = transaksi['jumlah'] as int;
-
-            return Card(
-              elevation: 4,
-              margin: EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.teal.shade50,
-                  child: getIcon(transaksi["keterangan"]),
-                ),
-                title: Text(
-                  transaksi["keterangan"],
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                subtitle: Text(
-                  DateFormat('EEEE, d MMM yyyy', 'id_ID')
-                      .format(DateTime.parse(transaksi["tanggal"])),
-                  style: TextStyle(color: Colors.grey.shade600),
-                ),
-                trailing: Text(
-                  currencyFormatter.format(jumlah),
-                  style: TextStyle(
-                    color: jumlah < 0 ? Colors.red : Colors.green,
+      body: Column(
+        children: [
+          // Header Ringkasan Saldo
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: Colors.blueAccent,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Total Aktivitas", style: TextStyle(color: Colors.white70)),
+                const SizedBox(height: 6),
+                Text(
+                  currencyFormatter.format(getTotalSaldo()),
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
                   ),
                 ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(transaksi["keterangan"]),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Tanggal: ${DateFormat('EEEE, d MMM yyyy', 'id_ID').format(DateTime.parse(transaksi["tanggal"]))}",
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Jumlah: ${currencyFormatter.format(transaksi["jumlah"])}",
-                              style: TextStyle(
-                                color: jumlah < 0 ? Colors.red : Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 12),
-                            Text(getDetailKeterangan(transaksi["keterangan"])),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            child: Text("Tutup"),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            );
-          },
-        ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Daftar Transaksi
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: riwayatTransaksi.length,
+              itemBuilder: (context, index) {
+                final transaksi = riwayatTransaksi[index];
+                final jumlah = transaksi['jumlah'] as int;
+                final warna = jumlah < 0 ? Colors.red : Colors.green;
+
+                return Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  elevation: 3,
+                  color: Colors.white,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    onTap: () => _showDetailDialog(context, transaksi),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.blue.shade50,
+                      radius: 28,
+                      child: getIcon(transaksi['keterangan']),
+                    ),
+                    title: Text(
+                      transaksi['keterangan'],
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      DateFormat('EEEE, d MMM yyyy', 'id_ID')
+                          .format(DateTime.parse(transaksi["tanggal"])),
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                    trailing: Text(
+                      currencyFormatter.format(jumlah),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: warna,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
+        ],
       ),
+    );
+  }
+
+  void _showDetailDialog(BuildContext context, Map<String, dynamic> transaksi) {
+    final jumlah = transaksi['jumlah'] as int;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              getIcon(transaksi["keterangan"]),
+              const SizedBox(width: 12),
+              Text(transaksi["keterangan"]),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "📅 Tanggal: ${DateFormat('EEEE, d MMM yyyy', 'id_ID').format(DateTime.parse(transaksi["tanggal"]))}",
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "💰 Jumlah: ${currencyFormatter.format(jumlah)}",
+                style: TextStyle(
+                  color: jumlah < 0 ? Colors.red : Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(getDetailKeterangan(transaksi["keterangan"])),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Tutup"),
+              style: TextButton.styleFrom(foregroundColor: Colors.blueAccent),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:aplikasi_koperasi1/screens/bantuan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -59,6 +60,7 @@ class _MyAppState extends State<MyApp> {
         '/pengajuan': (context) => PengajuanPinjamanScreen(),
         '/profil': (context) => const ProfilScreen(),
         '/notifikasi': (context) => const NotifikasiScreen(),
+        '/bantuan': (context) => const BantuanScreen(),
       },
     );
   }
