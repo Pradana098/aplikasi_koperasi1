@@ -7,4 +7,11 @@ class ApiConstants {
   static const String dashboardPengawas = '$baseUrl/dashboard/pengawas';
   static const String dashboardPengurus = '$baseUrl/dashboard/pengurus';
   static const String dashboardAnggota = '$baseUrl/dashboard/anggota';
+
+  static const String anggotaPending = '$baseUrl/anggota/pending';
+  static const String approveAnggota = '$baseUrl/anggota';
+  static const String rejectAnggota = '$baseUrl/anggota';
+
+  // static const String approveAnggota = '$baseUrl/anggota/{id}/approve';
+  // static const String rejectAnggota = '$baseUrl/anggota/{id}/reject';
 }

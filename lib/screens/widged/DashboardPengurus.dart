@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widged/pengurus/pendingAnggota.dart'; // pastikan sudah impor
 
 class DashboardPengurus extends StatelessWidget {
   final Map<String, dynamic> dashboardData;
@@ -15,7 +16,7 @@ class DashboardPengurus extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Balance
+              // Header Saldo
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -32,7 +33,7 @@ class DashboardPengurus extends StatelessWidget {
                     const Text("Saldo Simpanan", style: TextStyle(color: Colors.white70)),
                     const SizedBox(height: 10),
                     Text(
-                      "Rp 25.000.000",
+                      "Rp ${dashboardData['saldo_simpanan'] ?? '0'}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 28,
@@ -41,7 +42,9 @@ class DashboardPengurus extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // aksi tambah simpanan
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.blue,
@@ -54,7 +57,7 @@ class DashboardPengurus extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // Quick Actions
+              // Menu Pengurus
               const Text("Menu Pengurus", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               const SizedBox(height: 16),
               GridView.count(
@@ -63,11 +66,20 @@ class DashboardPengurus extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                children: const [
+                children: [
                   QuickAction(icon: Icons.send, label: "Kirim"),
                   QuickAction(icon: Icons.payment, label: "Bayar"),
                   QuickAction(icon: Icons.request_page, label: "Pengajuan"),
-                  QuickAction(icon: Icons.people, label: "Anggota"),
+                  QuickAction(
+                    icon: Icons.people,
+                    label: "Anggota",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => PendingAnggotaScreen()),
+                      );
+                    },
+                  ),
                   QuickAction(icon: Icons.notifications, label: "Notifikasi"),
                   QuickAction(icon: Icons.analytics, label: "Laporan"),
                   QuickAction(icon: Icons.settings, label: "Pengaturan"),
@@ -76,7 +88,7 @@ class DashboardPengurus extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // Upcoming Tasks
+              // Aktivitas Terbaru
               const Text("Aktivitas Terbaru", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               const SizedBox(height: 12),
               const ActivityCard(name: "Eric", amount: "- Rp 240.000", type: "Mengirim uang"),
@@ -93,25 +105,34 @@ class DashboardPengurus extends StatelessWidget {
 class QuickAction extends StatelessWidget {
   final IconData icon;
   final String label;
+  final VoidCallback? onTap;
 
-  const QuickAction({Key? key, required this.icon, required this.label}) : super(key: key);
+  const QuickAction({
+    Key? key,
+    required this.icon,
+    required this.label,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 4)],
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 4)],
+            ),
+            child: Icon(icon, color: Colors.blue),
           ),
-          child: Icon(icon, color: Colors.blue),
-        ),
-        const SizedBox(height: 6),
-        Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
-      ],
+          const SizedBox(height: 6),
+          Text(label, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
+        ],
+      ),
     );
   }
 }
@@ -121,7 +142,12 @@ class ActivityCard extends StatelessWidget {
   final String amount;
   final String type;
 
-  const ActivityCard({Key? key, required this.name, required this.amount, required this.type}) : super(key: key);
+  const ActivityCard({
+    Key? key,
+    required this.name,
+    required this.amount,
+    required this.type,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
