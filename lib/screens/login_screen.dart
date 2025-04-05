@@ -30,6 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       if (response != null) {
+        if (response.containsKey('error')) {
+          _showErrorSnackbar(response['error']);
+          return;
+        }
+
         final status = response['status'];
         if (status == 'pending') {
           _showErrorSnackbar(
@@ -41,12 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
         final role = response['role'];
         final token = response['access_token'];
 
-        // Simpan ke SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
         await prefs.setString('role', role);
 
-        // Navigasi ke dashboard utama
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const DashboardScreen()),
@@ -56,9 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       setState(() => isLoading = false);
-      _showErrorSnackbar(
-        "Terjadi kesalahan: ${e.toString().replaceFirst('Exception: ', '')}",
-      );
+      _showErrorSnackbar(e.toString().replaceFirst('Exception: ', ''));
     }
   }
 

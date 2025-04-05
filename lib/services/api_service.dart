@@ -5,7 +5,8 @@ import '../config/api_constants.dart';
 
 class ApiService {
   // Login Function
-  Future<Map<String, dynamic>?> login(String email, String password) async {
+ Future<Map<String, dynamic>?> login(String email, String password) async {
+  try {
     final response = await http.post(
       Uri.parse(ApiConstants.login),
       headers: {"Content-Type": "application/json"},
@@ -27,14 +28,22 @@ class ApiService {
       }
 
       return data;
-    } else if (response.statusCode == 403) {
-      throw Exception(data['message'] ?? "Akun Anda belum disetujui.");
-    } else if (response.statusCode == 401) {
-      throw Exception("Email atau password salah.");
     } else {
-      throw Exception("Terjadi kesalahan saat login. Coba lagi nanti.");
+      // jangan throw, cukup return null atau error message
+      return {
+        'error': data['message'] ?? "Login gagal. Silakan coba lagi.",
+        'statusCode': response.statusCode,
+      };
     }
+  } catch (e) {
+    return {
+      'error': 'Terjadi kesalahan koneksi.',
+      'statusCode': 500,
+    };
   }
+}
+
+
 
   // Logout Function
   Future<void> logout() async {
