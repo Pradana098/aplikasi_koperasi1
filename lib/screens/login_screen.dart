@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
 import 'dashboard_screen.dart';
 
@@ -26,19 +27,38 @@ class _LoginScreenState extends State<LoginScreen> {
 
       setState(() => isLoading = false);
 
-      if (!mounted) return; // Cegah error jika widget sudah di-dispose
+      if (!mounted) return;
 
       if (response != null) {
+        final status = response['status'];
+        if (status == 'pending') {
+          _showErrorSnackbar(
+            "Akun Anda sedang diproses. Mohon tunggu persetujuan.",
+          );
+          return;
+        }
+
+        final role = response['role'];
+        final token = response['access_token'];
+
+        // Simpan ke SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+        await prefs.setString('role', role);
+
+        // Navigasi ke dashboard utama
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          MaterialPageRoute(builder: (_) => const DashboardScreen()),
         );
       } else {
         _showErrorSnackbar("Login gagal! Periksa kembali email dan password.");
       }
     } catch (e) {
       setState(() => isLoading = false);
-      _showErrorSnackbar("Terjadi kesalahan: ${e.toString()}");
+      _showErrorSnackbar(
+        "Terjadi kesalahan: ${e.toString().replaceFirst('Exception: ', '')}",
+      );
     }
   }
 

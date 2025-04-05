@@ -12,14 +12,26 @@ class ApiService {
       body: jsonEncode({"email": email, "password": password}),
     );
 
+    final data = jsonDecode(response.body);
+
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      // Simpan token & role
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', data['token']);
-      await prefs.setString('role', data['role']); // Simpan role
+      await prefs.setString('token', data['access_token']);
+      await prefs.setString('role', data['role']);
+      await prefs.setString(
+        'status',
+        data['status'],
+      ); // simpan status jika perlu
+
       return data;
+    } else if (response.statusCode == 403) {
+      // Akun belum disetujui / status pending
+      throw Exception(data['message'] ?? "Akun Anda belum disetujui.");
+    } else if (response.statusCode == 401) {
+      throw Exception("Email atau password salah.");
     } else {
-      return null;
+      throw Exception("Terjadi kesalahan saat login. Coba lagi nanti.");
     }
   }
 
@@ -32,7 +44,7 @@ class ApiService {
       Uri.parse(ApiConstants.logout),
       headers: {
         "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
     );
 
