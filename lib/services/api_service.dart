@@ -16,7 +16,6 @@ class ApiService {
 
     if (response.statusCode == 200) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-
       await prefs.setString('token', data['access_token']);
 
       if (data['role'] != null) {
@@ -29,7 +28,6 @@ class ApiService {
 
       return data;
     } else if (response.statusCode == 403) {
-      // Akun belum disetujui / status pending
       throw Exception(data['message'] ?? "Akun Anda belum disetujui.");
     } else if (response.statusCode == 401) {
       throw Exception("Email atau password salah.");
@@ -51,7 +49,7 @@ class ApiService {
       },
     );
 
-    await prefs.clear(); // Hapus token dan role saat logout
+    await prefs.clear();
   }
 
   // Fetch Dashboard Data
@@ -60,11 +58,10 @@ class ApiService {
     String? token = prefs.getString('token');
     String? role = prefs.getString('role');
 
-    if (role == null || token == null) return null;
+    if (token == null || role == null) return null;
 
     String endpoint;
 
-    // Tentukan endpoint berdasarkan role
     if (role == "pengawas") {
       endpoint = ApiConstants.dashboardPengawas;
     } else if (role == "pengurus") {
@@ -75,12 +72,16 @@ class ApiService {
 
     final response = await http.get(
       Uri.parse(endpoint),
-      headers: {"Authorization": "Bearer $token"},
+      headers: {
+        "Authorization": "Bearer $token",
+        "Accept": "application/json",
+      },
     );
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
+      print("Gagal fetch dashboard: ${response.statusCode} - ${response.body}");
       return null;
     }
   }
