@@ -75,71 +75,106 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [_header(), _inputField()],
+      backgroundColor: Colors.grey.shade100, // Latar belakang abu-abu soft
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _logo(),
+              const SizedBox(height: 20),
+              _loginCard(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _header() {
+  Widget _logo() {
     return Column(
-      children: <Widget>[
-        // Logo dari asset
+      children: [
         Image.asset(
-          'assets/img/logo.png', // Ganti dengan path logo Anda
-          width: 150,
+          'assets/img/logo.png',
+          width: 120,
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          "Koperasi Simpan Pinjam",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+            letterSpacing: 1,
+          ),
         ),
       ],
     );
   }
 
-  Widget _inputField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TextField(
-          controller: emailController,
-          decoration: InputDecoration(
-            hintText: "Email",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            prefixIcon: const Icon(Icons.person),
+  Widget _loginCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.blueAccent, width: 5),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          controller: passwordController,
-          decoration: InputDecoration(
-            hintText: "Password",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            prefixIcon: const Icon(Icons.lock),
+        ],
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            "Login Anggota",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
-          obscureText: true,
+          const SizedBox(height: 20),
+          _inputField(Icons.email, "Email", emailController, false),
+          const SizedBox(height: 16),
+          _inputField(Icons.lock, "Password", passwordController, true),
+          const SizedBox(height: 24),
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : ElevatedButton(
+                  onPressed: _login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text("Login", style: TextStyle(fontSize: 18)),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _inputField(IconData icon, String hint, TextEditingController controller, bool obscure) {
+    return TextField(
+      controller: controller,
+      obscureText: obscure,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        hintText: hint,
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
         ),
-        const SizedBox(height: 10),
-        isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : ElevatedButton(
-              onPressed: _login,
-              style: ElevatedButton.styleFrom(
-                shape: const StadiumBorder(),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.blueAccent,
-              ),
-              child: const Text("Login", style: TextStyle(fontSize: 20)),
-            ),
-      ],
+      ),
     );
   }
 }
