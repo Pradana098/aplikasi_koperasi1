@@ -81,11 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _logo(),
-              const SizedBox(height: 20),
-              _loginCard(),
-            ],
+            children: [_logo(), const SizedBox(height: 20), _loginCard()],
           ),
         ),
       ),
@@ -95,10 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _logo() {
     return Column(
       children: [
-        Image.asset(
-          'assets/img/logo.png',
-          width: 120,
-        ),
+        Image.asset('assets/img/logo.png', width: 120),
         const SizedBox(height: 10),
         const Text(
           "Koperasi Simpan Pinjam",
@@ -117,14 +110,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.blueAccent, width: 5),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.1), // Lebih natural daripada biru
+            spreadRadius: 1,
+            blurRadius: 10,
+            offset: const Offset(0, 4), // Bayangan ke bawah
           ),
         ],
       ),
@@ -145,22 +137,27 @@ class _LoginScreenState extends State<LoginScreen> {
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : ElevatedButton(
-                  onPressed: _login,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Text("Login", style: TextStyle(fontSize: 18)),
                 ),
+                child: const Text("Login", style: TextStyle(fontSize: 18)),
+              ),
         ],
       ),
     );
   }
 
-  Widget _inputField(IconData icon, String hint, TextEditingController controller, bool obscure) {
+  Widget _inputField(
+    IconData icon,
+    String hint,
+    TextEditingController controller,
+    bool obscure,
+  ) {
     return TextField(
       controller: controller,
       obscureText: obscure,
@@ -169,7 +166,10 @@ class _LoginScreenState extends State<LoginScreen> {
         hintText: hint,
         filled: true,
         fillColor: Colors.grey.shade100,
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 20,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,

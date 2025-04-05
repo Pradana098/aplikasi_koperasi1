@@ -15,14 +15,17 @@ class ApiService {
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
-      // Simpan token & role
       SharedPreferences prefs = await SharedPreferences.getInstance();
+
       await prefs.setString('token', data['access_token']);
-      await prefs.setString('role', data['role']);
-      await prefs.setString(
-        'status',
-        data['status'],
-      ); // simpan status jika perlu
+
+      if (data['role'] != null) {
+        await prefs.setString('role', data['role']);
+      }
+
+      if (data['status'] != null) {
+        await prefs.setString('status', data['status']);
+      }
 
       return data;
     } else if (response.statusCode == 403) {
