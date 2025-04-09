@@ -51,14 +51,14 @@ class DashboardPengawas extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Chain Catering", style: TextStyle(color: Colors.white70, fontSize: 16)),
+          const Text("Dashboard Pengawas", style: TextStyle(color: Colors.white70, fontSize: 16)),
           const SizedBox(height: 4),
-          const Text("Current Balance", style: TextStyle(color: Colors.white70)),
+          const Text("Saldo Koperasi", style: TextStyle(color: Colors.white70)),
           const SizedBox(height: 6),
           Text(
-            "\$2000.00",
+            "\Rp. 25.000.000",
             style: TextStyle(
-              fontSize: 36,
+              fontSize: 32,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
@@ -67,8 +67,8 @@ class DashboardPengawas extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildBalanceItem("Total Income", "\$1358.5"),
-              _buildBalanceItem("Total Outcome", "\$266.0"),
+              _buildBalanceItem("Total Pemasukan", "\Rp. 35.000.000"),
+              _buildBalanceItem("Total Pengeluaran", "\Rp. 10.000.000"),
             ],
           ),
         ],
@@ -93,12 +93,12 @@ class DashboardPengawas extends StatelessWidget {
 
   Widget _buildCommonTools(BuildContext context) {
     final tools = [
-      {"icon": Icons.account_balance_wallet, "label": "Cash Withdrawal", "route": "/laporan-simpanan"},
-      {"icon": Icons.attach_money, "label": "Withdrawal Record", "route": "/laporan-pinjaman"},
-      {"icon": Icons.credit_card, "label": "My Bank Card", "route": "/profil"},
-      {"icon": Icons.store, "label": "Store Info", "route": "/pengaturan"},
-      {"icon": Icons.share, "label": "Share Plan", "route": "/download-laporan"},
-      {"icon": Icons.pie_chart, "label": "Distribution", "route": "/laporan-keuangan"},
+      {"icon": Icons.attach_money, "label": "Laporan Keuangan", "route": "/laporan-keuangan"},
+      {"icon": Icons.savings, "label": "Laporan Simpanan", "route": "/laporan-simpanan"},
+      {"icon": Icons.request_page, "label": "Laporan Pinjaman", "route": "/laporan-pinjaman"},
+      {"icon": Icons.show_chart, "label": "Perkembangan Koperasi", "route": "/perkembangan-koperasi"},
+      {"icon": Icons.group, "label": "Data Anggota", "route": "/data-anggota"},
+      {"icon": Icons.settings, "label": "Pengaturan Aplikasi", "route": "/pengaturan"},
     ];
 
     return GridView.count(
@@ -110,13 +110,14 @@ class DashboardPengawas extends StatelessWidget {
       children: tools.map((tool) {
         return GestureDetector(
           onTap: () {
-          Navigator.pushNamed(context, tool["route"] as String);
+            Navigator.pushNamed(context, tool["route"] as String);
           },
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircleAvatar(
                 backgroundColor: Colors.blue[100],
+                radius: 28,
                 child: Icon(tool["icon"] as IconData, color: Colors.blue[700]),
               ),
               const SizedBox(height: 8),
@@ -140,7 +141,7 @@ class DashboardPengawas extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Text(
-        "We wish everyone a prosperous and prosperous future. Happy New Year!",
+        "Selamat datang di dashboard pengawas. Pantau semua laporan dan data koperasi dengan mudah.",
         style: TextStyle(fontSize: 14, color: Colors.black87),
         textAlign: TextAlign.center,
       ),

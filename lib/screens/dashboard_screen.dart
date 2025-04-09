@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
 import 'menu_screen.dart'; // SidebarMenu
-import 'widged/DashboardPengawas.dart';
-import 'widged/DashboardPengurus.dart';
-import 'widged/DashboardAnggota.dart';
+import 'pengawas/DashboardPengawas.dart';
+import 'pengurus/DashboardPengurus.dart';
+import 'anggota/DashboardAnggota.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

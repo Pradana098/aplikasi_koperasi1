@@ -8,7 +8,13 @@ class PengajuanPinjamanScreen extends StatefulWidget {
 class _PengajuanPinjamanScreenState extends State<PengajuanPinjamanScreen> {
   final TextEditingController jumlahController = TextEditingController();
   String? _selectedLama;
-  final List<String> lamaOptions = ['3 Bulan', '6 Bulan', '12 Bulan'];
+  final List<String> lamaOptions = ['12 Bulan'];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedLama = '12 Bulan';
+  }
 
   double _hitungCicilan(String jumlahStr, String lamaStr) {
     double jumlah = double.tryParse(jumlahStr) ?? 0;
@@ -46,7 +52,6 @@ class _PengajuanPinjamanScreenState extends State<PengajuanPinjamanScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header / Hero Section
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(24),
@@ -80,7 +85,6 @@ class _PengajuanPinjamanScreenState extends State<PengajuanPinjamanScreen> {
 
             SizedBox(height: 20),
 
-            // Info Box
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Container(
@@ -109,7 +113,6 @@ class _PengajuanPinjamanScreenState extends State<PengajuanPinjamanScreen> {
 
             SizedBox(height: 20),
 
-            // Form Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Card(
