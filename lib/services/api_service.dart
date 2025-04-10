@@ -45,7 +45,7 @@ class ApiService {
     String? token = prefs.getString('token');
     String? role = prefs.getString('role');
 
-    if (role == null || token == null) return null;
+    if (token == null) return null;
 
     String endpoint;
 
