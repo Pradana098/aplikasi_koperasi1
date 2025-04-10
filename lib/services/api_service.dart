@@ -5,23 +5,45 @@ import '../config/api_constants.dart';
 
 class ApiService {
   // Login Function
-  Future<Map<String, dynamic>?> login(String email, String password) async {
+ Future<Map<String, dynamic>?> login(String email, String password) async {
+  try {
     final response = await http.post(
       Uri.parse(ApiConstants.login),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"email": email, "password": password}),
     );
 
+    final data = jsonDecode(response.body);
+
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', data['token']);
-      await prefs.setString('role', data['role']); // Simpan role
+      await prefs.setString('token', data['access_token']);
+
+      if (data['role'] != null) {
+        await prefs.setString('role', data['role']);
+      }
+
+      if (data['status'] != null) {
+        await prefs.setString('status', data['status']);
+      }
+
       return data;
     } else {
-      return null;
+      // jangan throw, cukup return null atau error message
+      return {
+        'error': data['message'] ?? "Login gagal. Silakan coba lagi.",
+        'statusCode': response.statusCode,
+      };
     }
+  } catch (e) {
+    return {
+      'error': 'Terjadi kesalahan koneksi.',
+      'statusCode': 500,
+    };
   }
+}
+
+
 
   // Logout Function
   Future<void> logout() async {
@@ -32,11 +54,11 @@ class ApiService {
       Uri.parse(ApiConstants.logout),
       headers: {
         "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
     );
 
-    await prefs.clear(); // Hapus token dan role saat logout
+    await prefs.clear();
   }
 
   // Fetch Dashboard Data
@@ -45,11 +67,10 @@ class ApiService {
     String? token = prefs.getString('token');
     String? role = prefs.getString('role');
 
-    if (token == null) return null;
+    if (role == null || token == null) return null;
 
     String endpoint;
 
-    // Tentukan endpoint berdasarkan role
     if (role == "pengawas") {
       endpoint = ApiConstants.dashboardPengawas;
     } else if (role == "pengurus") {
@@ -60,12 +81,16 @@ class ApiService {
 
     final response = await http.get(
       Uri.parse(endpoint),
-      headers: {"Authorization": "Bearer $token"},
+      headers: {
+        "Authorization": "Bearer $token",
+        "Accept": "application/json",
+      },
     );
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
+      print("Gagal fetch dashboard: ${response.statusCode} - ${response.body}");
       return null;
     }
   }

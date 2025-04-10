@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../screens/login_screen.dart'; // Pastikan login_screen sudah ada
+import '../screens/login_screen.dart'; // Pastikan file ini ada
 
 class SidebarMenu extends StatelessWidget {
   final String role;
@@ -9,13 +9,13 @@ class SidebarMenu extends StatelessWidget {
 
   Future<void> _logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // Hapus sesi login
+    await prefs.clear(); // Hapus semua data login
 
-    if (!context.mounted) return;
-
-    Navigator.pushReplacement(
+    // Navigasi ke login dan hapus semua halaman sebelumnya
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false,
     );
   }
 
@@ -38,7 +38,7 @@ class SidebarMenu extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.redAccent),
             title: const Text("Logout"),
-            onTap: () => _logout(context),
+            onTap: () => _logout(context), // Memastikan context dikirim
           ),
         ],
       ),
