@@ -5,33 +5,44 @@ import '../config/api_constants.dart';
 
 class ApiService {
   // Login Function
- Future<Map<String, dynamic>?> login(String email, String password) async {
+  Future<Map<String, dynamic>?> login(String noTelepon, String password) async {
   try {
     final response = await http.post(
       Uri.parse(ApiConstants.login),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}),
+      body: jsonEncode({
+        "no_telepon": noTelepon,
+        "password": password,
+      }),
     );
 
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', data['access_token']);
-
-      if (data['role'] != null) {
-        await prefs.setString('role', data['role']);
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Simpan token jika ada dan bertipe String
+      final token = data['access_token'];
+      if (token is String) {
+        await prefs.setString('token', token);
       }
 
-      if (data['status'] != null) {
-        await prefs.setString('status', data['status']);
+      // Simpan role jika ada dan bertipe String
+      final role = data['role'];
+      if (role is String) {
+        await prefs.setString('role', role);
+      }
+
+      // Simpan status jika ada dan bertipe String
+      final status = data['status'];
+      if (status is String) {
+        await prefs.setString('status', status);
       }
 
       return data;
     } else {
-      // jangan throw, cukup return null atau error message
       return {
-        'error': data['message'] ?? "Login gagal. Silakan coba lagi.",
+        'error': data['message'] ?? 'Login gagal.',
         'statusCode': response.statusCode,
       };
     }
@@ -42,6 +53,7 @@ class ApiService {
     };
   }
 }
+
 
 
 
