@@ -2,6 +2,7 @@ import 'package:aplikasi_koperasi1/screens/anggota/bantuan_screen.dart';
 import 'package:aplikasi_koperasi1/screens/anggota/pilihsimpanan_screen.dart';
 import 'package:aplikasi_koperasi1/screens/anggota/simpananpokok_screen.dart';
 import 'package:aplikasi_koperasi1/screens/anggota/simpananwajib_screen.dart';
+import 'package:aplikasi_koperasi1/screens/home_screen.dart';
 import 'package:aplikasi_koperasi1/screens/pengawas/dataanggota_screen.dart';
 import 'package:aplikasi_koperasi1/screens/pengawas/laporankeuangan_screen.dart';
 import 'package:aplikasi_koperasi1/screens/pengawas/laporanpinjaman_screen.dart';
@@ -9,7 +10,6 @@ import 'package:aplikasi_koperasi1/screens/pengawas/laporansimpanan_screen.dart'
 import 'package:aplikasi_koperasi1/screens/pengawas/pengaturanaplikasi_screen.dart';
 import 'package:aplikasi_koperasi1/screens/pengawas/perkembangankoperasi_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 // Import semua file
@@ -28,43 +28,20 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  Widget _initialScreen = const Scaffold(
-    body: Center(child: CircularProgressIndicator()),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    _checkLogin();
-  }
-
-  Future<void> _checkLogin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getString('token') != null;
-
-    setState(() {
-      _initialScreen = isLoggedIn ? const DashboardScreen() : const LoginScreen();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Koperasi Simpan Pinjam',
       debugShowCheckedModeBanner: false,
-      home: _initialScreen,
+      home: const HomeScreen(), 
       routes: {
         '/login': (context) => const LoginScreen(),
         '/dashboard': (context) => const DashboardScreen(),
-        '/dashboardAnggota': (context) => DashboardAnggota(dashboardData: {"saldo": 5000000}),
+        '/dashboardAnggota':
+            (context) => DashboardAnggota(dashboardData: {"saldo": 5000000}),
         '/riwayat': (context) => RiwayatTransaksiScreen(),
         '/pengajuan': (context) => PengajuanPinjamanScreen(),
         '/profil': (context) => const ProfilScreen(),
@@ -74,11 +51,12 @@ class _MyAppState extends State<MyApp> {
         '/simpananpokok': (context) => const SimpananPokokScreen(),
         '/simpananwajib': (context) => const SimpananWajibScreen(),
 
-        //pengawas 
+        //pengawas
         '/laporan-keuangan': (context) => const LaporanKeuanganScreen(),
         '/laporan-simpanan': (context) => const LaporanSimpananScreen(),
         '/laporan-pinjaman': (context) => const LaporanPinjamanScreen(),
-        '/perkembangan-koperasi': (context) => const PerkembanganKoperasiScreen(),
+        '/perkembangan-koperasi':
+            (context) => const PerkembanganKoperasiScreen(),
         '/data-anggota': (context) => const DataAnggotaScreen(),
         '/pengaturan': (context) => const PengaturanAplikasiScreen(),
       },

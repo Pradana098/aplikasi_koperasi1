@@ -54,15 +54,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (context) => Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          width: 250,
-          height: double.infinity,
-          color: Colors.white,
-          child: SidebarMenu(role: role),
-        ),
-      ),
+      builder:
+          (context) => Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              width: 250,
+              height: double.infinity,
+              color: Colors.white,
+              child: SidebarMenu(role: role),
+            ),
+          ),
     );
   }
 
@@ -88,9 +89,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Text(
                     "Politeknik Negeri Banyuwangi",
                     style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -98,36 +100,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search, color: Colors.white)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications, color: Colors.white)),
-          IconButton(onPressed: _showSidebarMenu, icon: const Icon(Icons.menu, color: Colors.white)),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search, color: Colors.white),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications, color: Colors.white),
+          ),
+          IconButton(
+            onPressed: _showSidebarMenu,
+            icon: const Icon(Icons.menu, color: Colors.white),
+          ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : dashboardData == null
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : dashboardData == null
               ? const Center(child: Text("Gagal memuat data dashboard."))
               : Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Builder(
-                          builder: (context) {
-                            switch (role) {
-                              case 'pengawas':
-                                return DashboardPengawas(dashboardData: dashboardData!);
-                              case 'pengurus':
-                                return DashboardPengurus(dashboardData: dashboardData!);
-                              default:
-                                return DashboardAnggota(dashboardData: dashboardData!);
-                            }
-                          },
-                        ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Builder(
+                        builder: (context) {
+                          if (role == "anggota") {
+                            return DashboardAnggota(
+                              dashboardData: dashboardData!,
+                            );
+                          } else if (role == "pengurus") {
+                            return DashboardPengurus(
+                              dashboardData: dashboardData!,
+                            );
+                          } else if (role == "pengawas") {
+                            return DashboardPengawas(
+                              dashboardData: dashboardData!,
+                            );
+                          } else {
+                            return const Center(
+                              child: Text("Role tidak dikenali."),
+                            );
+                          }
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
     );
   }
 }
