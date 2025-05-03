@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:aplikasi_koperasi1/screens/screens/anggota/dashboard_anggota.dart';
+import 'package:aplikasi_koperasi1/screens/screens/pengawas/dashboard_pengawas.dart';
+import 'package:aplikasi_koperasi1/screens/screens/pengurus/dashboard_pengurus.dart';
 import '../services/api_service.dart';
-import 'dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -32,40 +33,51 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       if (response != null) {
-        if (response.containsKey('error')) {
-          _showErrorSnackbar(response['error']);
+        // Menangani error jika ada
+        if (response.containsKey('message')) {
+          _showErrorSnackbar(response['message']);
           return;
         }
 
-        final status = response['status'];
-        if (status == 'pending') {
-          _showErrorSnackbar(
-            "Akun Anda sedang diproses. Mohon tunggu persetujuan.",
-          );
-          return;
-        }
-
-        final role = response['role'];
+       
+        final role = response['user']['role']; 
         final token = response['access_token'];
 
         if (token != null) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
-          await prefs.setString('role', role ?? '');
+          await prefs.setString('role', role);
         }
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
-        );
+        if (role == 'pengawas') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PengawasDashboardScreen(data: response['user']),
+            ),
+          );
+        } else if (role == 'pengurus') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PengurusDashboardScreen(data: response['user']),
+            ),
+          );
+        } else if (role == 'anggota') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AnggotaDashboardScreen(data: response['user']),
+            ),
+          );
+        } else {
+          _showErrorSnackbar("Role tidak dikenali.");
+        }
       } else {
-        _showErrorSnackbar(
-          "Login gagal! Periksa kembali nip dan password.",
-        );
+        _showErrorSnackbar("Login gagal. Silakan coba lagi.");
       }
     } catch (e) {
       setState(() => isLoading = false);
-      _showErrorSnackbar(e.toString().replaceFirst('Exception: ', ''));
+      _showErrorSnackbar("Terjadi kesalahan. Silakan coba lagi.");
     }
   }
 
@@ -82,13 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF4285F4), // full blue background
+      backgroundColor: const Color(0xFF4285F4),
       body: SafeArea(
         top: false,
         child: Center(
           child: Column(
             children: [
-              // Card putih dengan bawah melengkung
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -113,11 +124,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       Center(
                         child: Text(
                           "Login",
-                          style: GoogleFonts.poppins(
-                            textStyle: TextStyle(
-                              fontSize: 18,
-                              color: Colors.black,
-                            ),
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.black,
                           ),
                         ),
                       ),
@@ -159,28 +168,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       isLoading
                           ? const Center(child: CircularProgressIndicator())
                           : SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _login();
-                                // aksi login
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF4285F4),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  _login();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF4285F4),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
                                 ),
-                              ),
-                              child: const Text(
-                                "Login",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
+                                child: const Text(
+                                  "Login",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
                     ],
                   ),
                 ),

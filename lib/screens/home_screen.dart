@@ -1,20 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  Future<void> handleMasuk(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getString('token') != null;
-
-    if (isLoggedIn) {
-      Navigator.pushReplacementNamed(context, '/dashboard');
-    } else {
-      Navigator.pushNamed(context, '/login');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                   height: 50,
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => handleMasuk(context),
+                    onPressed: () => Navigator.pushNamed(context, '/login'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(

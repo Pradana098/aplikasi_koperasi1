@@ -68,6 +68,9 @@ flutter:
       - assets/img/logo.png
       - assets/img/logo_koperasi.png
       - assets/img/Group 146.png
+      - assets/icons/icon_1.png
+      - assets/icons/icon_2.png
+      - assets/icons/icon_3.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
