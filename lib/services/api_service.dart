@@ -5,12 +5,12 @@ import '../config/api_constants.dart';
 
 class ApiService {
   // Login Function
- Future<Map<String, dynamic>?> login(String email, String password) async {
+ Future<Map<String, dynamic>?> login(String nip, String password) async {
   try {
     final response = await http.post(
       Uri.parse(ApiConstants.login),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}),
+      body: jsonEncode({"nip": nip, "password": password}),
     );
 
     final data = jsonDecode(response.body);
@@ -43,11 +43,24 @@ class ApiService {
   }
 }
 
+Future<void> storeToken(String token, String role) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    await prefs.setString('role', role);
+  }
+
+  // Fungsi untuk mengambil token yang sudah disimpan
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
 
 
   // Logout Function
-  Future<void> logout() async {
+   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+<<<<<<< HEAD
     String? token = prefs.getString('token');
 
     await http.post(
@@ -93,5 +106,9 @@ class ApiService {
       print("Gagal fetch dashboard: ${response.statusCode} - ${response.body}");
       return null;
     }
+=======
+    await prefs.remove('token');
+    await prefs.remove('role');
+>>>>>>> ad072e79da9571db624d8bcc9ec64fbc301d2f7d
   }
 }
