@@ -56,7 +56,6 @@ class ApiService {
   // Logout Function
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-<<<<<<< HEAD
     String? token = prefs.getString('token');
 
     await http.post(
@@ -102,10 +101,6 @@ class ApiService {
       print("Gagal fetch dashboard: ${response.statusCode} - ${response.body}");
       return null;
     }
-=======
-    await prefs.remove('token');
-    await prefs.remove('role');
->>>>>>> ad072e79da9571db624d8bcc9ec64fbc301d2f7d
   }
 
   Future<int?> fetchTotalAnggota() async {
