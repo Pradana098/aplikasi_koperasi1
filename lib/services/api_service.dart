@@ -1,49 +1,47 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/api_constants.dart';
 
 class ApiService {
   // Login Function
- Future<Map<String, dynamic>?> login(String nip, String password) async {
-  try {
-    final response = await http.post(
-      Uri.parse(ApiConstants.login),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"nip": nip, "password": password}),
-    );
+  Future<Map<String, dynamic>?> login(String nip, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.login),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"nip": nip, "password": password}),
+      );
 
-    final data = jsonDecode(response.body);
+      final data = jsonDecode(response.body);
 
-    if (response.statusCode == 200) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', data['access_token']);
+      if (response.statusCode == 200) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data['access_token']);
 
-      if (data['role'] != null) {
-        await prefs.setString('role', data['role']);
+        if (data['role'] != null) {
+          await prefs.setString('role', data['role']);
+        }
+
+        if (data['status'] != null) {
+          await prefs.setString('status', data['status']);
+        }
+
+        return data;
+      } else {
+        // jangan throw, cukup return null atau error message
+        return {
+          'error': data['message'] ?? "Login gagal. Silakan coba lagi.",
+          'statusCode': response.statusCode,
+        };
       }
-
-      if (data['status'] != null) {
-        await prefs.setString('status', data['status']);
-      }
-
-      return data;
-    } else {
-      // jangan throw, cukup return null atau error message
-      return {
-        'error': data['message'] ?? "Login gagal. Silakan coba lagi.",
-        'statusCode': response.statusCode,
-      };
+    } catch (e) {
+      return {'error': 'Terjadi kesalahan koneksi.', 'statusCode': 500};
     }
-  } catch (e) {
-    return {
-      'error': 'Terjadi kesalahan koneksi.',
-      'statusCode': 500,
-    };
   }
-}
 
-Future<void> storeToken(String token, String role) async {
+  Future<void> storeToken(String token, String role) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
     await prefs.setString('role', role);
@@ -55,12 +53,37 @@ Future<void> storeToken(String token, String role) async {
     return prefs.getString('token');
   }
 
-
-
   // Logout Function
-   Future<void> logout() async {
+  Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
     await prefs.remove('role');
   }
+
+  Future<int?> fetchTotalAnggota() async {
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse(ApiConstants.jumlahAnggotaUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['total_anggota']; // hanya return datanya
+    } else {
+      debugPrint('Gagal mendapatkan data: ${response.body}');
+      return null;
+    }
+  } catch (e) {
+    debugPrint('Error: $e');
+    return null;
+  }
+}
+
 }

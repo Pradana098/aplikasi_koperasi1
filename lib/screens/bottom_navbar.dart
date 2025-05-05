@@ -15,79 +15,30 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Hitung ukuran responsif berdasarkan lebar layar
-    final screenWidth = MediaQuery.of(context).size.width;
-    final iconSize = screenWidth * 0.08; // misal 8% lebar layar
-    final buttonMinSize = iconSize + 16;
-
     return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF448AFF),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          // Home Icon
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(
-              minWidth: buttonMinSize,
-              minHeight: buttonMinSize,
-            ),
-            icon: SizedBox(
-              width: iconSize,
-              height: iconSize,
-              child: Image.asset(
-                'assets/icons/icon_1.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            onPressed: () => onTap(0),
+        decoration: const BoxDecoration(
+          color: Color(0xFF448AFF),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
-
-          // Scan Icon (highlighted)
-          Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              constraints: BoxConstraints(
-                minWidth: buttonMinSize,
-                minHeight: buttonMinSize,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(icon: const Icon(Icons.home), onPressed: () {}, color: Colors.black),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey,
               ),
-              icon: SizedBox(
-                width: iconSize,
-                height: iconSize,
-                child: Image.asset(
-                  'assets/icons/icon_3.png',
-                  fit: BoxFit.contain,
-                ),
-              ),
-              onPressed: () => onTap(1),
+              child: const Icon(Icons.qr_code, color: Colors.black),
             ),
-          ),
-
-          // Settings Icon
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(
-              minWidth: buttonMinSize,
-              minHeight: buttonMinSize,
-            ),
-            icon: SizedBox(
-              width: iconSize,
-              height: iconSize,
-              child: Image.asset(
-                'assets/icons/icon_2.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            onPressed: () => onTap(2),
-          ),
-        ],
-      ),
-    );
+            IconButton(icon: const Icon(Icons.settings), onPressed: () {}, color: Colors.black),
+          ],
+        ),
+      );
   }
 }

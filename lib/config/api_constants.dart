@@ -11,6 +11,7 @@ class ApiConstants {
   static const String anggotaPending = '$baseUrl/anggota/pending';
   static const String approveAnggota = '$baseUrl/anggota';
   static const String rejectAnggota = '$baseUrl/anggota';
+  static const String jumlahAnggotaUrl = '$baseUrl/pengurus/jumlah-anggota';
 
   // static const String approveAnggota = '$baseUrl/anggota/{id}/approve';
   // static const String rejectAnggota = '$baseUrl/anggota/{id}/reject';

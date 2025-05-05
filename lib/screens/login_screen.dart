@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:aplikasi_koperasi1/screens/screens/anggota/dashboard_anggota.dart';
-import 'package:aplikasi_koperasi1/screens/screens/pengawas/dashboard_pengawas.dart';
-import 'package:aplikasi_koperasi1/screens/screens/pengurus/dashboard_pengurus.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/anggota/dashboard_anggota.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengawas/dashboard_pengawas.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/dashboard_pengurus.dart';
 import '../services/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -189,6 +189,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Don't have an account?"),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/register');
+                            },
+                            child: const Text("Register"),
+                          ),
+                        ],
+                      ),
+                      
                     ],
                   ),
                 ),
