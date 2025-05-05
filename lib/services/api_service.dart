@@ -56,8 +56,56 @@ class ApiService {
   // Logout Function
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+<<<<<<< HEAD
+    String? token = prefs.getString('token');
+
+    await http.post(
+      Uri.parse(ApiConstants.logout),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+    );
+
+    await prefs.clear();
+  }
+
+  // Fetch Dashboard Data
+  Future<Map<String, dynamic>?> getDashboardData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? role = prefs.getString('role');
+
+    if (role == null || token == null) return null;
+
+    String endpoint;
+
+    if (role == "pengawas") {
+      endpoint = ApiConstants.dashboardPengawas;
+    } else if (role == "pengurus") {
+      endpoint = ApiConstants.dashboardPengurus;
+    } else {
+      endpoint = ApiConstants.dashboardAnggota;
+    }
+
+    final response = await http.get(
+      Uri.parse(endpoint),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Accept": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print("Gagal fetch dashboard: ${response.statusCode} - ${response.body}");
+      return null;
+    }
+=======
     await prefs.remove('token');
     await prefs.remove('role');
+>>>>>>> ad072e79da9571db624d8bcc9ec64fbc301d2f7d
   }
 
   Future<int?> fetchTotalAnggota() async {
