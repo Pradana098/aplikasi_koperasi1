@@ -1,11 +1,12 @@
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/rinciananggota.dart';
 import 'package:flutter/material.dart';
-import 'anggota_disetujui.dart'; // Import halaman Anggota Disetujui
 
 class PendaftaranAnggotaPage extends StatefulWidget {
   const PendaftaranAnggotaPage({super.key});
 
   @override
-  State<PendaftaranAnggotaPage> createState() => _PendaftaranAnggotaPageState();
+  State<PendaftaranAnggotaPage> createState() =>
+      _PendaftaranAnggotaPageState();
 }
 
 class _PendaftaranAnggotaPageState extends State<PendaftaranAnggotaPage> {
@@ -41,7 +42,6 @@ class _PendaftaranAnggotaPageState extends State<PendaftaranAnggotaPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Filter data anggota berdasarkan status
     final filteredAnggota = filter == 'semua'
         ? anggota
         : anggota.where((item) => item['status'] == filter).toList();
@@ -65,7 +65,7 @@ class _PendaftaranAnggotaPageState extends State<PendaftaranAnggotaPage> {
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.black),
                   onPressed: () {
-                    Navigator.pop(context); // Kembali ke halaman sebelumnya
+                    Navigator.pop(context);
                   },
                 ),
               ),
@@ -88,118 +88,105 @@ class _PendaftaranAnggotaPageState extends State<PendaftaranAnggotaPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Filter tombol
+            // Tombol Filter
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildFilterButton('Semua', Colors.blueAccent, () {
-                  setState(() {
-                    filter = 'semua';
-                  });
-                }),
-                _buildFilterButton('Disetujui', Colors.blueAccent, () {
-                  setState(() {
-                    filter = 'disetujui';
-                  });
-                }),
-                _buildFilterButton('Ditolak', Colors.blueAccent, () {
-                  setState(() {
-                    filter = 'ditolak';
-                  });
-                }),
+                _buildFilterButton('semua'),
+                _buildFilterButton('disetujui'),
+                _buildFilterButton('ditolak'),
               ],
             ),
             const SizedBox(height: 20),
 
-            // Daftar anggota
+            // Daftar Anggota
             Expanded(
               child: ListView.builder(
                 itemCount: filteredAnggota.length,
                 itemBuilder: (context, index) {
                   final data = filteredAnggota[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 24,
-                              backgroundColor: Colors.black,
-                              child: Icon(Icons.person, color: Colors.white),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              data['nama']!,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RincianPendaftaranPage(data: data),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const CircleAvatar(
+                                radius: 24,
+                                backgroundColor: Colors.black,
+                                child:
+                                    Icon(Icons.person, color: Colors.white),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'No Telp : ${data['noTelp']}',
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                        Text(
-                          'Alamat : ${data['alamat']}',
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                        Text(
-                          'NIP/NIK/NIPPPK : ${data['nip']}',
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                        Text(
-                          'Unit Kerja : ${data['unitKerja']}',
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  data['status'] = 'disetujui';
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF00FF00),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
+                              const SizedBox(width: 12),
+                              Text(
+                                data['nama']!,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
                               ),
-                              child: const Text('Setujui'),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  data['status'] = 'ditolak';
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text('No Telp : ${data['noTelp']}',
+                              style: const TextStyle(color: Colors.black54)),
+                          Text('Alamat : ${data['alamat']}',
+                              style: const TextStyle(color: Colors.black54)),
+                          Text('NIP/NIK/NIPPPK : ${data['nip']}',
+                              style: const TextStyle(color: Colors.black54)),
+                          Text('Unit Kerja : ${data['unitKerja']}',
+                              style: const TextStyle(color: Colors.black54)),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    data['status'] = 'disetujui';
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF00FF00),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
                                 ),
+                                child: const Text('Setujui'),
                               ),
-                              child: const Text('Tolak'),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    data['status'] = 'ditolak';
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
+                                ),
+                                child: const Text('Tolak'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -222,7 +209,7 @@ class _PendaftaranAnggotaPageState extends State<PendaftaranAnggotaPage> {
           children: [
             IconButton(
               onPressed: () {
-                // Aksi untuk tombol Home
+                // Aksi tombol Home
               },
               icon: const Icon(Icons.home, color: Colors.black, size: 30),
             ),
@@ -235,14 +222,15 @@ class _PendaftaranAnggotaPageState extends State<PendaftaranAnggotaPage> {
               ),
               child: IconButton(
                 onPressed: () {
-                  // Aksi untuk tombol QR Code
+                  // Aksi tombol QR Code
                 },
-                icon: const Icon(Icons.qr_code_scanner, color: Colors.black, size: 30),
+                icon: const Icon(Icons.qr_code_scanner,
+                    color: Colors.black, size: 30),
               ),
             ),
             IconButton(
               onPressed: () {
-                // Aksi untuk tombol Settings
+                // Aksi tombol Settings
               },
               icon: const Icon(Icons.settings, color: Colors.black, size: 30),
             ),
@@ -252,17 +240,22 @@ class _PendaftaranAnggotaPageState extends State<PendaftaranAnggotaPage> {
     );
   }
 
-  Widget _buildFilterButton(String label, Color color, VoidCallback onPressed) {
+  Widget _buildFilterButton(String label) {
+    final isSelected = filter == label;
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: () {
+        setState(() {
+          filter = label;
+        });
+      },
       style: ElevatedButton.styleFrom(
-        backgroundColor: color,
+        backgroundColor: isSelected ? Colors.blue[800] : Colors.blueAccent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
       ),
       child: Text(
-        label,
+        label[0].toUpperCase() + label.substring(1),
         style: const TextStyle(color: Colors.white),
       ),
     );
