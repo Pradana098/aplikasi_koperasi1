@@ -129,4 +129,34 @@ class ApiService {
   }
 }
 
+Future<Map<String, dynamic>> registerAnggota(
+  String nama,
+  String nip,
+  String password,
+  String confirmPassword,
+) async {
+  try {
+    final response = await http.post(
+      Uri.parse(ApiConstants.register),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'nama': nama,
+        'nip': nip,
+        'password': password,
+        'password_confirmation': confirmPassword,
+      }),
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 201) {
+      return {'success': true, 'message': data['message']};
+    } else {
+      return {'success': false, 'message': data['message']};
+    }
+  } catch (e) {
+    return {'success': false, 'message': 'Terjadi kesalahan koneksi.'};
+  }
+}
+
 }

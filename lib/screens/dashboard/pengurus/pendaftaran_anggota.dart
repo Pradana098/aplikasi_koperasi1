@@ -1,6 +1,7 @@
 import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/rinciananggota.dart';
 import 'package:flutter/material.dart';
 
+
 class PendaftaranAnggotaPage extends StatefulWidget {
   const PendaftaranAnggotaPage({super.key});
 
