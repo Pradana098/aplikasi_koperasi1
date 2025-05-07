@@ -1,164 +1,159 @@
-import 'package:aplikasi_koperasi1/screens/bottom_navbar.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/data_anggota.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/pendaftaran_anggota.dart';
 import 'package:flutter/material.dart';
+import 'tambah_anggota.dart'; // Import halaman Tambah Anggota
+import 'edit_anggota.dart'; // Import halaman Edit Anggota
+import 'hapus_anggota.dart'; // Import halaman Hapus Anggota
 
-class KelolaAnggota extends StatefulWidget {
-  final Map<String, dynamic> data;
-
-  const KelolaAnggota({Key? key, required this.data}) : super(key: key);
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _KelolaAnggotaState createState() => _KelolaAnggotaState();
-}
-
-class _KelolaAnggotaState extends State<KelolaAnggota> {
-  int _currentIndex = 0;
+class KelolaAnggotaPage extends StatelessWidget {
+  const KelolaAnggotaPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // Header Background
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: screenHeight * 0.25 + MediaQuery.of(context).padding.top,
-              decoration: const BoxDecoration(
-                color: Color(0xFF448AFF),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(170),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.blueAccent,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(16),
+              bottomRight: Radius.circular(16),
+            ),
+          ),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context); // Kembali ke halaman sebelumnya
+                  },
                 ),
               ),
-              child: SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top:
-                        MediaQuery.of(context).padding.top +
-                        4, // posisi lebih ke atas
-                    left: 16,
-                    right: 16,
-                  ),
-                  child: Row(
-                    children: const [
-                      Icon(Icons.arrow_back, color: Colors.black, size: 28),
-                      SizedBox(width: 12),
-                      Text(
-                        'Pengelolaan Anggota',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
+              const Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Pengelolaan Anggota',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-
-          // Content
-          Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.25),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  const SizedBox(height: 24),
-
-                  // Kotak putih latar belakang menu
-                  Center(
-                    child: Container(
-                      height: 300,
-                      width: 448,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 75, 75, 75), // Warna latar belakang
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          _MenuTile(
-                            iconPath: 'assets/icons/icon_5.png',
-                            title: 'Pendaftaran Anggota Baru',
-                            onTap: () {
-                              // Handle tap
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _MenuTile(
-                            iconPath: 'assets/icons/icon_5.png',
-                            title: 'Data Anggota',
-                            onTap: () {
-                              // Handle tap
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
-
-      // Bottom Navigation
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() => _currentIndex = index);
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Tombol Pendaftaran Anggota Baru
+            _buildMenuButton(
+              context,
+              icon: Icons.folder,
+              label: 'Pendaftaran Anggota Baru',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PendaftaranAnggotaPage(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            // Tombol Data Anggota
+            _buildMenuButton(
+              context,
+              icon: Icons.folder,
+              label: 'Data Anggota',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DataAnggotaPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 70,
+        decoration: const BoxDecoration(
+          color: Colors.blueAccent,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              onPressed: () {
+                // Aksi untuk tombol Home
+              },
+              icon: const Icon(Icons.home, color: Colors.black, size: 30),
+            ),
+            Container(
+              height: 50,
+              width: 50,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  // Aksi untuk tombol QR Code
+                },
+                icon: const Icon(Icons.qr_code_scanner, color: Colors.black, size: 30),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                // Aksi untuk tombol Settings
+              },
+              icon: const Icon(Icons.settings, color: Colors.black, size: 30),
+            ),
+          ],
+        ),
       ),
     );
   }
-}
 
-// Reusable MenuTile widget
-class _MenuTile extends StatelessWidget {
-  final String title;
-  final String iconPath;
-  final VoidCallback onTap;
-
-  const _MenuTile({
-    required this.title,
-    required this.iconPath,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
+  Widget _buildMenuButton(BuildContext context,
+      {required IconData icon, required String label, required VoidCallback onTap}) {
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
       child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(8),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset(iconPath, width: 32, height: 32),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black,
+            Row(
+              children: [
+                Icon(icon, color: Colors.black),
+                const SizedBox(width: 12),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
+              ],
             ),
             const Icon(Icons.arrow_forward, color: Colors.black),
           ],

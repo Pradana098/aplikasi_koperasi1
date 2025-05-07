@@ -1,6 +1,7 @@
 import 'package:aplikasi_koperasi1/screens/bottom_navbar.dart';
-import 'package:aplikasi_koperasi1/screens/profile_logo_screen.dart';
 import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/Kelola_anggota.dart';
+//import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/Kelola_anggota.dart'; // pastikan widget ini sudah ada
+import 'package:aplikasi_koperasi1/screens/profile_logo_screen.dart';
 import 'package:aplikasi_koperasi1/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -60,7 +61,6 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Header Background
           Positioned(
             top: 0,
             left: 0,
@@ -76,7 +76,6 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
               ),
             ),
           ),
-          // Content
           Padding(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             child: SingleChildScrollView(
@@ -84,7 +83,7 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ProfilSelamatDatangWidget(
-                    photoUrl: photoUrl,
+                    photoUrl: photoUrl ?? '', // Placeholder jika null
                     nama: userName,
                     onNotificationTap: () {},
                   ),
@@ -119,7 +118,6 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
     );
   }
 
-  /// Statistik Koperasi
   Widget _buildStatisticsSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -206,7 +204,6 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
     );
   }
 
-  /// Menu Grid Navigasi
   Widget _buildMenuGrid() {
     final List<Map<String, dynamic>> menuItems = [
       {'icon': Icons.group, 'label': 'Kelola Anggota', 'route': '/kelolaAnggota'},
@@ -233,53 +230,50 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
     );
   }
 
- Widget _buildMenuItem(IconData icon, String label, {String? route}) {
-  return InkWell(
-    onTap: () {
-      if (route != null) {
-        if (route == '/kelolaAnggota') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => KelolaAnggota(data: widget.data),
-            ),
-          );
-        } else {
-          Navigator.of(context).pushNamed(route);
+  Widget _buildMenuItem(IconData icon, String label, {String? route}) {
+    return InkWell(
+      onTap: () {
+        if (route != null) {
+          if (route == '/kelolaAnggota') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => KelolaAnggotaPage()), // Pastikan widget ini ada
+            );
+          } else {
+            Navigator.of(context).pushNamed(route);
+          }
         }
-      }
-    },
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: const [
-              BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
-            ],
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
+              ],
+            ),
+            child: Icon(icon, size: 28, color: Colors.black),
           ),
-          child: Icon(icon, size: 28, color: Colors.black),
-        ),
-        const SizedBox(height: 6),
-        Flexible(
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 10, color: Colors.black87),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          const SizedBox(height: 6),
+          Flexible(
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 10, color: Colors.black87),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
-  /// Grafik Dummy
   Widget _buildDevelopmentGraph() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -302,60 +296,42 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
+              boxShadow: const [
+                BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
+              ],
             ),
-            child: const Center(child: Icon(Icons.bar_chart, size: 32, color: Colors.blue)),
+            child: const Center(child: Text('Grafik Perkembangan Koperasi')),
           ),
         ],
       ),
     );
   }
 
-  /// Riwayat Aktivitas
   Widget _buildActivityHistory() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade600,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Riwayat Aktivitas Anggota:',
-            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+            'Riwayat Kegiatan',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
           ),
-          const SizedBox(height: 12),
-          _buildActivityItem('Andi Mengajukan Pinjaman (10:45)'),
           const SizedBox(height: 8),
-          _buildActivityItem('Budi Menyetujui Pinjaman (11:00)'),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: const [
+                BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
+              ],
+            ),
+            child: const Text('Belum ada riwayat kegiatan terbaru.'),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildActivityItem(String text) {
-    return Row(
-      children: [
-        Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(Icons.check_circle, color: Colors.white, size: 16),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-          ),
-        ),
-      ],
     );
   }
 }
