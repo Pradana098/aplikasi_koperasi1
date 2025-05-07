@@ -1,166 +1,201 @@
-import 'package:aplikasi_koperasi1/screens/bottom_navbar.dart';
 import 'package:flutter/material.dart';
+import 'tambah_anggota.dart'; // Import halaman Tambah Anggota
+import 'edit_anggota.dart'; // Import halaman Edit Anggota
+import 'hapus_anggota.dart'; // Import halaman Hapus Anggota
 
-class KelolaAnggota extends StatefulWidget {
-  final Map<String, dynamic> data;
-
-  const KelolaAnggota({Key? key, required this.data}) : super(key: key);
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _KelolaAnggotaState createState() => _KelolaAnggotaState();
-}
-
-class _KelolaAnggotaState extends State<KelolaAnggota> {
-  int _currentIndex = 0;
+class DataAnggotaPage extends StatelessWidget {
+  const DataAnggotaPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final names = ['Andi', 'Roy', 'Reni', 'Siti'];
+    final phones = ['08123456789', '08123456780', '08123456781', '08123456782'];
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // Header Background
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: screenHeight * 0.25 + MediaQuery.of(context).padding.top,
-              decoration: const BoxDecoration(
-                color: Color(0xFF448AFF),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
+      backgroundColor: Colors.white, // Warna latar belakang paling belakang
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(170), // Tinggi AppBar diperpanjang hingga setengah layar
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.blueAccent, // Warna latar belakang blueAccent
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AppBar(
+                backgroundColor: Colors.transparent, // Transparan agar warna container terlihat
+                elevation: 0, // Hilangkan bayangan AppBar
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.black), // Ikon panah warna putih
+                  onPressed: () {
+                    Navigator.pop(context); // Kembali ke halaman sebelumnya
+                  },
                 ),
-              ),
-              child: SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top:
-                        MediaQuery.of(context).padding.top +
-                        4, // posisi lebih ke atas
-                    left: 16,
-                    right: 16,
+                title: const Text(
+                  'Data Anggota',
+                  style: TextStyle(
+                    color: Colors.black, // Warna teks putih
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: Row(
-                    children: const [
-                      Icon(Icons.arrow_back, color: Colors.black, size: 28),
-                      SizedBox(width: 12),
-                      Text(
-                        'Pengelolaan Anggota',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                ),
+                centerTitle: true,
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: SizedBox(
+          height: 500, // Tinggi border dibatasi
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[200], // Background abu-abu
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                // Search dan tombol tambah
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            border: InputBorder.none,
+                            icon: Icon(Icons.search, color: Colors.black),
+                          ),
                         ),
                       ),
-                    ],
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TambahAnggotaPage(), // Navigasi ke halaman Tambah Anggota
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // Latar belakang putih
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(14),
+                      ),
+                      child: const Icon(Icons.add, color: Colors.black), // Ikon tambah warna hitam
+                    )
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // Daftar anggota
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: names.length, // Ganti sesuai jumlah data
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.blueAccent, // Background putih untuk setiap anggota
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            // Ikon user
+                            const Icon(Icons.person, color: Colors.black, size: 40),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    names[index],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black, // Warna teks hitam
+                                    ),
+                                  ),
+                                  Text(
+                                    phones[index],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54, // Warna teks abu-abu
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Tombol edit
+                            IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditAnggotaPage(nama: names[index]), // Navigasi ke halaman Edit Anggota
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.edit, color: Colors.green), // Ikon edit warna hijau
+                              splashRadius: 24, // Ukuran lingkaran klik
+                            ),
+                            const SizedBox(width: 8),
+                            // Tombol hapus
+                            IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const HapusAnggotaPage(), // Navigasi ke halaman Hapus Anggota
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.delete, color: Colors.red), // Ikon hapus warna merah
+                              splashRadius: 24, // Ukuran lingkaran klik
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
-              ),
+              ],
             ),
           ),
-
-          // Content
-          Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.25),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  const SizedBox(height: 24),
-
-                  // Kotak putih latar belakang menu
-                  Center(
-                    child: Container(
-                      height: 300,
-                      width: 448,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 75, 75, 75), // Warna latar belakang
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          _MenuTile(
-                            iconPath: 'assets/icons/icon_5.png',
-                            title: 'Pendaftaran Anggota Baru',
-                            onTap: () {
-                              // Handle tap
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _MenuTile(
-                            iconPath: 'assets/icons/icon_5.png',
-                            title: 'Data Anggota',
-                            onTap: () {
-                              // Handle tap
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
 
       // Bottom Navigation
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() => _currentIndex = index);
-        },
-      ),
-    );
-  }
-}
-
-// Reusable MenuTile widget
-class _MenuTile extends StatelessWidget {
-  final String title;
-  final String iconPath;
-  final VoidCallback onTap;
-
-  const _MenuTile({
-    required this.title,
-    required this.iconPath,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
+      bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.blueAccent,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16), // Lengkungan di sisi kiri atas
+            topRight: Radius.circular(16), // Lengkungan di sisi kanan atas
+          ),
+          border: Border(top: BorderSide(color: Colors.blueAccent.shade700, width: 2)),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         child: Row(
-          children: [
-            Image.asset(iconPath, width: 32, height: 32),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            const Icon(Icons.arrow_forward, color: Colors.black),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Icon(Icons.home, color: Colors.black, size: 30), // Ikon warna hitam
+            Icon(Icons.qr_code_scanner, color: Colors.black, size: 30), // Ikon warna hitam
+            Icon(Icons.settings, color: Colors.black, size: 30), // Ikon warna hitam
           ],
         ),
       ),
