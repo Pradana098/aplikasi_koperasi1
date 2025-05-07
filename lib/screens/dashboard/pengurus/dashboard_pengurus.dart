@@ -237,7 +237,7 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
           if (route == '/kelolaAnggota') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DataAnggotaPage()), // Pastikan widget ini ada
+              MaterialPageRoute(builder: (context) => KelolaAnggotaPage()), // Pastikan widget ini ada
             );
           } else {
             Navigator.of(context).pushNamed(route);
