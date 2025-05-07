@@ -1,4 +1,5 @@
 import 'package:aplikasi_koperasi1/screens/home_screen.dart';
+import 'package:aplikasi_koperasi1/screens/regrister_srceen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       home: const HomeScreen(), 
       routes: {
         '/login': (context) => const LoginScreen(),
+        '/register': (context) => RegisterPageViewScreen(),
       },
     );
   }
