@@ -1,9 +1,9 @@
 import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/data_anggota.dart';
 import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/pendaftaran_anggota.dart';
 import 'package:flutter/material.dart';
-import 'tambah_anggota.dart'; // Import halaman Tambah Anggota
-import 'edit_anggota.dart'; // Import halaman Edit Anggota
-import 'hapus_anggota.dart'; // Import halaman Hapus Anggota
+//import 'tambah_anggota.dart'; // Import halaman Tambah Anggota
+//import 'edit_anggota.dart'; // Import halaman Edit Anggota
+//import 'hapus_anggota.dart'; // Import halaman Hapus Anggota
 
 class KelolaAnggotaPage extends StatelessWidget {
   const KelolaAnggotaPage({super.key});
