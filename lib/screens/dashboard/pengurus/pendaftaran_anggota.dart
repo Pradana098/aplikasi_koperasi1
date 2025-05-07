@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'anggota_disetujui.dart'; // Import halaman Anggota Disetujui
 
+
 class PendaftaranAnggotaPage extends StatefulWidget {
   const PendaftaranAnggotaPage({super.key});
 
