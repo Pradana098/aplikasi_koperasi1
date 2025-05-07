@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-//import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/dashboard_pengurus.dart';
-=======
->>>>>>> efc95936ece036f3c3afb20568e55c3a31bdd3ee
 import 'package:aplikasi_koperasi1/screens/home_screen.dart';
 import 'package:aplikasi_koperasi1/screens/login_screen.dart';
 import 'package:aplikasi_koperasi1/screens/regrister_srceen.dart';
