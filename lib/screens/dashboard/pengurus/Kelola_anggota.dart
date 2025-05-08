@@ -113,7 +113,8 @@ class KelolaAnggotaPage extends StatelessWidget {
                 onPressed: () {
                   // Aksi untuk tombol QR Code
                 },
-                icon: const Icon(Icons.qr_code_scanner, color: Colors.black, size: 30),
+                icon: const Icon(Icons.qr_code_scanner,
+                    color: Colors.black, size: 30),
               ),
             ),
             IconButton(
@@ -129,7 +130,9 @@ class KelolaAnggotaPage extends StatelessWidget {
   }
 
   Widget _buildMenuButton(BuildContext context,
-      {required IconData icon, required String label, required VoidCallback onTap}) {
+      {required IconData icon,
+      required String label,
+      required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
