@@ -1,6 +1,7 @@
 import 'package:aplikasi_koperasi1/screens/bottom_navbar.dart';
 import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/Kelola_anggota.dart';
-//import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/Kelola_anggota.dart'; // pastikan widget ini sudah ada
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/pengajuan_pinjaman_page.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpan_pinjam.dart';
 import 'package:aplikasi_koperasi1/screens/profile_logo_screen.dart';
 import 'package:aplikasi_koperasi1/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -238,6 +239,16 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => KelolaAnggotaPage()), // Pastikan widget ini ada
+            );
+          } else if (route == '/simpanPinjam') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SimpanPinjamPage()), // Navigasi ke halaman Simpan Pinjam
+            );
+          } else if (route == '/pengajuanPinjaman') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PengajuanPinjamanPage()), // Navigasi ke halaman Pengajuan Pinjaman
             );
           } else {
             Navigator.of(context).pushNamed(route);
