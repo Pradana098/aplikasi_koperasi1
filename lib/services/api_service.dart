@@ -130,47 +130,4 @@ class ApiService {
   }
 }
 
-  Future<bool> register({
-    required String nama,
-    required String noTelepon,
-    required String password,
-    required String confirmPassword,
-    required String nip,
-    required String tempatLahir,
-    required String tanggalLahir,
-    required String alamatRumah,
-    required String unitKerja,
-    required File skFile,
-  }) async {
-   try {
-      final response = await http.post(
-        Uri.parse(ApiConstants.register),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          'nama': nama,
-          'no_telepon': noTelepon,
-          'password': password,
-          'password_confirmation': confirmPassword,
-          'nip': nip,
-          'tempat_lahir': tempatLahir,
-          'tanggal_lahir': tanggalLahir,
-          'alamat_rumah': alamatRumah,
-          'unit_kerja': unitKerja,
-          'sk_file': base64Encode(skFile.readAsBytesSync()),
-        }),
-      );
-
-      if (response.statusCode == 201) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      return false;
-    }
-
-  }
-
 }
