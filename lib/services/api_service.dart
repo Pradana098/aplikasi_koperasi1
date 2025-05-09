@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -129,34 +130,47 @@ class ApiService {
   }
 }
 
-Future<Map<String, dynamic>> registerAnggota(
-  String nama,
-  String nip,
-  String password,
-  String confirmPassword,
-) async {
-  try {
-    final response = await http.post(
-      Uri.parse(ApiConstants.register),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'nama': nama,
-        'nip': nip,
-        'password': password,
-        'password_confirmation': confirmPassword,
-      }),
-    );
+  Future<bool> register({
+    required String nama,
+    required String noTelepon,
+    required String password,
+    required String confirmPassword,
+    required String nip,
+    required String tempatLahir,
+    required String tanggalLahir,
+    required String alamatRumah,
+    required String unitKerja,
+    required File skFile,
+  }) async {
+   try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.register),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          'nama': nama,
+          'no_telepon': noTelepon,
+          'password': password,
+          'password_confirmation': confirmPassword,
+          'nip': nip,
+          'tempat_lahir': tempatLahir,
+          'tanggal_lahir': tanggalLahir,
+          'alamat_rumah': alamatRumah,
+          'unit_kerja': unitKerja,
+          'sk_file': base64Encode(skFile.readAsBytesSync()),
+        }),
+      );
 
-    final data = jsonDecode(response.body);
-
-    if (response.statusCode == 201) {
-      return {'success': true, 'message': data['message']};
-    } else {
-      return {'success': false, 'message': data['message']};
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
-  } catch (e) {
-    return {'success': false, 'message': 'Terjadi kesalahan koneksi.'};
+
   }
-}
 
 }
