@@ -1,8 +1,10 @@
-import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/tambah_simpanan_page.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpan_pinjam/pembayaran_page.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpan_pinjam/pinjaman_page.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpan_pinjam/simpanan_page.dart';
 import 'package:flutter/material.dart';
 
-class SimpananSukarelaPage extends StatelessWidget {
-  const SimpananSukarelaPage({super.key});
+class SimpanPinjamPage extends StatelessWidget {
+  const SimpanPinjamPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class SimpananSukarelaPage extends StatelessWidget {
               const Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Simpanan Sukarela',
+                  'Simpan Pinjam',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 20,
@@ -47,65 +49,47 @@ class SimpananSukarelaPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoCard(
-              icon: Icons.account_balance_wallet,
-              title: 'Total Saldo',
-              subtitle: 'Rp 1.250.000',
-            ),
-            const SizedBox(height: 16),
-            _buildInfoCard(
-              icon: Icons.calendar_today,
-              title: 'Terakhir Menabung',
-              subtitle: '01 Mei 2025',
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
+            _buildMenuButton(
+              context,
+              icon: Icons.attach_money,
+              label: 'Simpanan',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const TambahSimpananPage(),
+                    builder: (context) => const SimpananPage(), // Halaman Simpanan
                   ),
                 );
               },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: const [
-                        Icon(Icons.add, color: Colors.green),
-                        SizedBox(width: 12),
-                        Text(
-                          'Tambah Simpanan',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Icon(Icons.arrow_forward, color: Colors.black),
-                  ],
-                ),
-              ),
             ),
             const SizedBox(height: 16),
-            _buildInfoCard(
-              icon: Icons.receipt_long,
-              title: 'Riwayat Simpanan:',
-              subtitle: '''
-• 01 Mei 2025    Rp 250.000  "Tabungan untuk kebutuhan lebaran"
-• 02 Mei 2025    Rp 250.000  "Tabungan untuk kebutuhan lebaran"
-              ''',
+            _buildMenuButton(
+              context,
+              icon: Icons.percent_outlined,
+              label: 'Pinjaman',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PinjamanPage(), // Halaman Pinjaman
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildMenuButton(
+              context,
+              icon: Icons.payment_outlined,
+              label: 'Pembayaran',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PembayaranPage(), // Halaman Pembayaran
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -154,42 +138,36 @@ class SimpananSukarelaPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard({required IconData icon, required String title, required String subtitle}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: Colors.blueAccent, size: 30),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildMenuButton(BuildContext context,
+      {required IconData icon, required String label, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
               children: [
+                Icon(icon, color: Colors.black),
+                const SizedBox(width: 12),
                 Text(
-                  title,
+                  label,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                  ),
-                ),
               ],
             ),
-          ),
-        ],
+            const Icon(Icons.arrow_forward, color: Colors.black),
+          ],
+        ),
       ),
     );
   }

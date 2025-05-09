@@ -1,7 +1,9 @@
 import 'package:aplikasi_koperasi1/screens/bottom_navbar.dart';
-import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/Kelola_anggota.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/anggota/Kelola_anggota.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/laporan/laporan_page.dart';
 import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/pengajuan_pinjaman_page.dart';
-import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpan_pinjam.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpan_pinjam/simpan_pinjam.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/kirim_notifikasi.dart';
 import 'package:aplikasi_koperasi1/screens/profile_logo_screen.dart';
 import 'package:aplikasi_koperasi1/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -249,6 +251,16 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const PengajuanPinjamanPage()), // Navigasi ke halaman Pengajuan Pinjaman
+            );
+          } else if (route == '/notifikasi') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const KirimNotifikasiPage()),
+            );
+          } else if (route == '/laporan') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LaporanPage()),
             );
           } else {
             Navigator.of(context).pushNamed(route);

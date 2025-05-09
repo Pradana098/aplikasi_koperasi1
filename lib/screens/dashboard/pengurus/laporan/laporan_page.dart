@@ -1,9 +1,10 @@
-import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpanan_sukarela_page.dart';
-import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpanan_wajib_page.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/laporan/laporan_keuangan_page.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/laporan/laporan_pinjaman_page.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/laporan/laporan_simpanan_page.dart';
 import 'package:flutter/material.dart';
 
-class SimpananPage extends StatelessWidget {
-  const SimpananPage({super.key});
+class LaporanPage extends StatelessWidget {
+  const LaporanPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class SimpananPage extends StatelessWidget {
               const Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Simpan',
+                  'Laporan',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 20,
@@ -49,38 +50,43 @@ class SimpananPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildMenuButton(
+            _buildLaporanItem(
               context,
-              icon: Icons.money,
-              label: 'Simpanan Wajib',
+              title: 'Laporan Simpanan',
+              icon: Icons.folder,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SimpananWajibPage(),
+                    builder: (context) => const LaporanSimpananPage(),
                   ),
                 );
               },
             ),
             const SizedBox(height: 16),
-            _buildMenuButton(
+            _buildLaporanItem(
               context,
-              icon: Icons.money,
-              label: 'Simpanan Pokok',
-              onTap: () {
-                // Navigasi ke halaman Simpanan Pokok
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildMenuButton(
-              context,
-              icon: Icons.money,
-              label: 'Simpanan Sukarela',
+              title: 'Laporan Pinjaman',
+              icon: Icons.folder,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const SimpananSukarelaPage(),
+                    builder: (context) => const LaporanPinjamanPage(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildLaporanItem(
+              context,
+              title: 'Laporan Keuangan',
+              icon: Icons.folder,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LaporanKeuanganPage(),
                   ),
                 );
               },
@@ -102,7 +108,7 @@ class SimpananPage extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () {
-                // Aksi untuk tombol Home
+                Navigator.pop(context); // Navigasi ke halaman Home
               },
               icon: const Icon(Icons.home, color: Colors.black, size: 30),
             ),
@@ -115,14 +121,14 @@ class SimpananPage extends StatelessWidget {
               ),
               child: IconButton(
                 onPressed: () {
-                  // Aksi untuk tombol QR Code
+                  // Navigasi ke halaman Scan QRIS
                 },
                 icon: const Icon(Icons.qr_code_scanner, color: Colors.black, size: 30),
               ),
             ),
             IconButton(
               onPressed: () {
-                // Aksi untuk tombol Settings
+                // Navigasi ke halaman Pengaturan
               },
               icon: const Icon(Icons.settings, color: Colors.black, size: 30),
             ),
@@ -132,14 +138,14 @@ class SimpananPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuButton(BuildContext context,
-      {required IconData icon, required String label, required VoidCallback onTap}) {
-    return GestureDetector(
+  Widget _buildLaporanItem(BuildContext context,
+      {required String title, required IconData icon, required VoidCallback onTap}) {
+    return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey[200],
+          color: Colors.grey[300],
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -147,10 +153,10 @@ class SimpananPage extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: Colors.green),
+                Icon(icon, size: 24, color: Colors.black),
                 const SizedBox(width: 12),
                 Text(
-                  label,
+                  title,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

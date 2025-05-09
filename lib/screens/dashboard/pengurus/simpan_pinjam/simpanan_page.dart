@@ -1,12 +1,9 @@
-import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/data_anggota.dart';
-import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/pendaftaran_anggota.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpan_pinjam/simpanan_sukarela_page.dart';
+import 'package:aplikasi_koperasi1/screens/dashboard/pengurus/simpan_pinjam/simpanan_wajib_page.dart';
 import 'package:flutter/material.dart';
-//import 'tambah_anggota.dart'; // Import halaman Tambah Anggota
-//import 'edit_anggota.dart'; // Import halaman Edit Anggota
-//import 'hapus_anggota.dart'; // Import halaman Hapus Anggota
 
-class KelolaAnggotaPage extends StatelessWidget {
-  const KelolaAnggotaPage({super.key});
+class SimpananPage extends StatelessWidget {
+  const SimpananPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +24,7 @@ class KelolaAnggotaPage extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.black),
                   onPressed: () {
                     Navigator.pop(context); // Kembali ke halaman sebelumnya
                   },
@@ -36,9 +33,9 @@ class KelolaAnggotaPage extends StatelessWidget {
               const Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Pengelolaan Anggota',
+                  'Simpan',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -52,31 +49,38 @@ class KelolaAnggotaPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Tombol Pendaftaran Anggota Baru
             _buildMenuButton(
               context,
-              icon: Icons.folder,
-              label: 'Pendaftaran Anggota Baru',
+              icon: Icons.money,
+              label: 'Simpanan Wajib',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PendaftaranAnggotaPage(),
+                    builder: (context) => const SimpananWajibPage(),
                   ),
                 );
               },
             ),
             const SizedBox(height: 16),
-            // Tombol Data Anggota
             _buildMenuButton(
               context,
-              icon: Icons.folder,
-              label: 'Data Anggota',
+              icon: Icons.money,
+              label: 'Simpanan Pokok',
+              onTap: () {
+                // Navigasi ke halaman Simpanan Pokok
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildMenuButton(
+              context,
+              icon: Icons.money,
+              label: 'Simpanan Sukarela',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const DataAnggotaPage(),
+                    builder: (context) => const SimpananSukarelaPage(),
                   ),
                 );
               },
@@ -113,8 +117,7 @@ class KelolaAnggotaPage extends StatelessWidget {
                 onPressed: () {
                   // Aksi untuk tombol QR Code
                 },
-                icon: const Icon(Icons.qr_code_scanner,
-                    color: Colors.black, size: 30),
+                icon: const Icon(Icons.qr_code_scanner, color: Colors.black, size: 30),
               ),
             ),
             IconButton(
@@ -130,9 +133,7 @@ class KelolaAnggotaPage extends StatelessWidget {
   }
 
   Widget _buildMenuButton(BuildContext context,
-      {required IconData icon,
-      required String label,
-      required VoidCallback onTap}) {
+      {required IconData icon, required String label, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -146,7 +147,7 @@ class KelolaAnggotaPage extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: Colors.black),
+                Icon(icon, color: Colors.green),
                 const SizedBox(width: 12),
                 Text(
                   label,
