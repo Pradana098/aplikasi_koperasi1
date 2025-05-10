@@ -32,7 +32,7 @@ class CustomBottomNavBar extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.grey,
+                color: Colors.white,
               ),
               child: const Icon(Icons.qr_code, color: Colors.black),
             ),
