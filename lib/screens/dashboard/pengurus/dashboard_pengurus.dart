@@ -14,14 +14,13 @@ class PengurusDashboardScreen extends StatefulWidget {
   const PengurusDashboardScreen({super.key, required this.data});
 
   @override
-  State<PengurusDashboardScreen> createState() => _PengurusDashboardScreenState();
+  State<PengurusDashboardScreen> createState() =>
+      _PengurusDashboardScreenState();
 }
 
 class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
   int _currentIndex = 0;
   int? _totalAnggota;
-  bool _isLoading = true;
-  String _errorMessage = '';
   final ApiService _apiService = ApiService();
 
   @override
@@ -31,26 +30,13 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
   }
 
   Future<void> getJumlahAnggota() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-    });
-
     try {
       final jumlah = await _apiService.fetchTotalAnggota();
       setState(() {
         _totalAnggota = jumlah;
       });
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Terjadi kesalahan: $e';
-      });
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      debugPrint('Error fetching total anggota: $e');
     }
   }
 
@@ -86,22 +72,15 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ProfilSelamatDatangWidget(
-                    photoUrl: photoUrl ?? '', // Placeholder jika null
+                    photoUrl:
+                        (photoUrl != null && photoUrl.isNotEmpty)
+                            ? photoUrl
+                            : 'assets/profile/avatar_1.png',
                     nama: userName,
                     onNotificationTap: () {},
                   ),
                   const SizedBox(height: 10),
-                  if (_isLoading)
-                    const Center(child: CircularProgressIndicator())
-                  else if (_errorMessage.isNotEmpty)
-                    Center(
-                      child: Text(
-                        _errorMessage,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    )
-                  else
-                    _buildStatisticsSection(),
+                  _buildStatisticsSection(),
                   _buildMenuGrid(),
                   _buildDevelopmentGraph(),
                   _buildActivityHistory(),
@@ -190,7 +169,10 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
               Flexible(
                 child: Text(
                   title,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -199,7 +181,10 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
           const SizedBox(height: 2),
           Text(
             value,
-            style: TextStyle(fontSize: isSmallText ? 11 : 13, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: isSmallText ? 11 : 13,
+              fontWeight: FontWeight.bold,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -209,13 +194,33 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
 
   Widget _buildMenuGrid() {
     final List<Map<String, dynamic>> menuItems = [
-      {'icon': Icons.group, 'label': 'Kelola Anggota', 'route': '/kelolaAnggota'},
+      {
+        'icon': Icons.group,
+        'label': 'Kelola Anggota',
+        'route': '/kelolaAnggota',
+      },
       {'icon': Icons.trending_up, 'label': 'Grafik', 'route': '/grafik'},
-      {'icon': Icons.notifications, 'label': 'Kirim Notifikasi', 'route': '/notifikasi'},
-      {'icon': Icons.money, 'label': 'Pembayaran Pinjaman', 'route': '/persetujuanPinjaman'},
+      {
+        'icon': Icons.notifications,
+        'label': 'Kirim Notifikasi',
+        'route': '/notifikasi',
+      },
+      {
+        'icon': Icons.money,
+        'label': 'Pembayaran Pinjaman',
+        'route': '/persetujuanPinjaman',
+      },
       {'icon': Icons.description, 'label': 'Laporan', 'route': '/laporan'},
-      {'icon': Icons.edit_note, 'label': 'Pengajuan Pinjaman', 'route': '/pengajuanPinjaman'},
-      {'icon': Icons.account_balance_wallet, 'label': 'Simpan Pinjam', 'route': '/simpanPinjam'},
+      {
+        'icon': Icons.edit_note,
+        'label': 'Pengajuan Pinjaman',
+        'route': '/pengajuanPinjaman',
+      },
+      {
+        'icon': Icons.account_balance_wallet,
+        'label': 'Simpan Pinjam',
+        'route': '/simpanPinjam',
+      },
     ];
 
     return Padding(
@@ -226,9 +231,14 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
         physics: const NeverScrollableScrollPhysics(),
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        children: menuItems.map((item) {
-          return _buildMenuItem(item['icon'], item['label'], route: item['route']);
-        }).toList(),
+        children:
+            menuItems.map((item) {
+              return _buildMenuItem(
+                item['icon'],
+                item['label'],
+                route: item['route'],
+              );
+            }).toList(),
       ),
     );
   }
@@ -240,22 +250,30 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
           if (route == '/kelolaAnggota') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => KelolaAnggotaPage()), // Pastikan widget ini ada
+              MaterialPageRoute(
+                builder: (context) => KelolaAnggotaPage(),
+              ), // Pastikan widget ini ada
             );
           } else if (route == '/simpanPinjam') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SimpanPinjamPage()), // Navigasi ke halaman Simpan Pinjam
+              MaterialPageRoute(
+                builder: (context) => const SimpanPinjamPage(),
+              ), // Navigasi ke halaman Simpan Pinjam
             );
           } else if (route == '/pengajuanPinjaman') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const PengajuanPinjamanPage()), // Navigasi ke halaman Pengajuan Pinjaman
+              MaterialPageRoute(
+                builder: (context) => const PengajuanPinjamanPage(),
+              ), // Navigasi ke halaman Pengajuan Pinjaman
             );
           } else if (route == '/notifikasi') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const KirimNotifikasiPage()),
+              MaterialPageRoute(
+                builder: (context) => const KirimNotifikasiPage(),
+              ),
             );
           } else if (route == '/laporan') {
             Navigator.push(
@@ -277,7 +295,11 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
               ],
             ),
             child: Icon(icon, size: 28, color: Colors.black),
@@ -320,7 +342,11 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
               color: Colors.white.withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
               boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
               ],
             ),
             child: const Center(child: Text('Grafik Perkembangan Koperasi')),
@@ -348,7 +374,11 @@ class _PengurusDashboardScreenState extends State<PengurusDashboardScreen> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
               boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 2,
+                  offset: Offset(0, 1),
+                ),
               ],
             ),
             child: const Text('Belum ada riwayat kegiatan terbaru.'),
