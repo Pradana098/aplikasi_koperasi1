@@ -1,6 +1,6 @@
 import 'package:aplikasi_koperasi1/screens/home_screen.dart';
 import 'package:aplikasi_koperasi1/screens/login_screen.dart';
-import 'package:aplikasi_koperasi1/screens/regrister_srceen.dart';
+import 'package:aplikasi_koperasi1/screens/register_srceen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
