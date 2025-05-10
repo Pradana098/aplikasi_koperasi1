@@ -1,188 +1,301 @@
-import 'package:aplikasi_koperasi1/services/api_service.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
-
+class RegisterPageViewScreen extends StatefulWidget {
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  _RegisterPageViewScreenState createState() => _RegisterPageViewScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-  PlatformFile? _skPejanjianKerja;
+class _RegisterPageViewScreenState extends State<RegisterPageViewScreen> {
+  final PageController _controller = PageController();
+  int _currentIndex = 0;
 
-  int _currentStep = 0;
+  final TextEditingController namaController = TextEditingController();
+  final TextEditingController nipController = TextEditingController();
+  final TextEditingController tempatTanggalLahirController = TextEditingController();
+  final TextEditingController alamatController = TextEditingController();
+  final TextEditingController nomorHpController = TextEditingController();
+  final TextEditingController unitKerjaController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
-  final _namaController = TextEditingController();
-  final _noHpController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _konfirmasiPasswordController = TextEditingController();
-  final _nipController = TextEditingController();
-  final _tempatLahirController = TextEditingController();
-  final _tanggalLahirController = TextEditingController();
-  final _alamatController = TextEditingController();
-  final _unitKerjaController = TextEditingController();
+  bool isSubmitted = false;
+  bool isApproved = false;
 
-  Future<void> _pickKtpFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-    );
+  @override
+  void initState() {
+    super.initState();
+    _checkApprovalStatus();
+  }
 
-    if (result != null) {
-      setState(() {
-        _skPejanjianKerja = result.files.single;
-      });
+  void _nextPage() {
+    if (_currentIndex < 2) {
+      _controller.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+      setState(() => _currentIndex++);
     }
   }
 
-  Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate() && _skPejanjianKerja != null) {
-      final apiService = ApiService();
-      final success = await apiService.registerAnggota(
-        name: _namaController.text,
-        no_telepon: _noHpController.text,
-        password: _passwordController.text,
-        konfirmasi_password: _konfirmasiPasswordController.text,
-        nip: _nipController.text,
-        tempat_lahir: _tempatLahirController.text,
-        tanggal_lahir: _tanggalLahirController.text,
-        alamat_rumah: _alamatController.text,
-        unit_kerja: _unitKerjaController.text,
-        sk_perjanjian_kerja: File(_skPejanjianKerja!.path!),
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(success ? 'Registrasi berhasil' : 'Gagal registrasi')),
-      );
+  void _prevPage() {
+    if (_currentIndex > 0) {
+      _controller.previousPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+      setState(() => _currentIndex--);
     }
+  }
+
+  void _submitRegister() {
+    setState(() {
+      isSubmitted = true;
+      isApproved = false;
+    });
+    _nextPage();
+  }
+
+  void _checkApprovalStatus() {
+    Future.delayed(Duration(seconds: 5), () {
+      setState(() {
+        isApproved = true;
+      });
+    });
+  }
+
+  void _showConfirmDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("Konfirmasi"),
+        content: Text("Are you sure you want to register as a member?"),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("Cancel")),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _submitRegister();
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+            child: Text("Yes, Submit"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {bool obscureText = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+      ),
+    );
+  }
+
+  Widget _buildProgressStep(String title, IconData icon, bool isActive) {
+    return Column(
+      children: [
+        Icon(icon, color: isActive ? Colors.blueAccent : Colors.grey, size: 30),
+        SizedBox(height: 4),
+        Text(
+          title,
+          style: TextStyle(fontSize: 12, color: isActive ? Colors.blueAccent : Colors.grey),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProgressLine() {
+    return Expanded(
+      child: Divider(color: Colors.grey, thickness: 2),
+    );
+  }
+
+  Widget _buildProgressBar() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildProgressStep("Registration Form", Icons.edit, _currentIndex == 0),
+          _buildProgressLine(),
+          _buildProgressStep("Membership Terms", Icons.description, _currentIndex == 1),
+          _buildProgressLine(),
+          _buildProgressStep("Verification", Icons.check_circle, _currentIndex == 2),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep1Form() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: ListView(
+        children: [
+          Text("Registration Form", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          SizedBox(height: 20),
+          _buildTextField("Nama Lengkap", namaController),
+          SizedBox(height: 10),
+          _buildTextField("NIP/NIK/NIPPPK", nipController),
+          SizedBox(height: 10),
+          _buildTextField("Tempat, Tanggal Lahir", tempatTanggalLahirController),
+          SizedBox(height: 10),
+          _buildTextField("Alamat Rumah", alamatController),
+          SizedBox(height: 10),
+          _buildTextField("Nomor HP/Whatsapp", nomorHpController),
+          SizedBox(height: 10),
+          _buildTextField("Unit Kerja", unitKerjaController),
+          SizedBox(height: 10),
+          _buildTextField("Buat Password", passwordController, obscureText: true),
+          SizedBox(height: 10),
+          _buildTextField("Konfirmasi Password", confirmPasswordController, obscureText: true),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _nextPage,
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+            child: Text('Register'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep2Terms() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Terms of Membership", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+          SizedBox(height: 20),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(
+                    "1. Menyetujui AD/ART dan peraturan koperasi.\n\n"
+                    "2. Melampirkan fotokopi SK Perjanjian Kerja.\n\n"
+                    "3. Membayar Simpanan Pokok Rp 50.000,- saat mendaftar.\n\n"
+                    "4. Membayar Simpanan Wajib Rp 40.000,- tiap awal bulan.\n\n"
+                    "5. Simpanan Sukarela bersifat opsional.\n",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Logika upload dokumen
+                    },
+                    icon: Icon(Icons.upload_file),
+                    label: Text("Upload Documents"),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: _prevPage,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                child: Text('Back'),
+              ),
+              Spacer(),
+              ElevatedButton(
+                onPressed: _showConfirmDialog,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+                child: Text("Register"),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep3Verification() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Registration Verification", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+          SizedBox(height: 20),
+          Center(
+            child: GestureDetector(
+              onTap: () => setState(() => isApproved = true),
+              child: Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isApproved ? Icons.check_circle : Icons.hourglass_empty,
+                      color: isApproved ? Colors.blueAccent : Colors.orange,
+                      size: 30,
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      isApproved ? "Registration Approved" : "Pending Verification",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isApproved ? Colors.blueAccent : Colors.orange),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Text("Registration History", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("20 April 2025", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                SizedBox(height: 5),
+                Text("Membership Registration", style: TextStyle(fontSize: 14)),
+                SizedBox(height: 5),
+                Text(
+                  isApproved ? "Registration Approved" : "Pending Verification",
+                  style: TextStyle(fontSize: 14, color: isApproved ? Colors.blueAccent : Colors.orange),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+          if (isApproved)
+            Center(
+              child: ElevatedButton(
+                onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+                child: Text("Go To Login"),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register Anggota'),
+        title: Text('Register Koperasi'),
+        backgroundColor: Colors.blueAccent,
       ),
-      body: Stepper(
-        currentStep: _currentStep,
-        onStepContinue: () {
-          if (_currentStep == 0 && _formKey.currentState!.validate()) {
-            setState(() {
-              _currentStep += 1;
-            });
-          } else if (_currentStep == 1 && _skPejanjianKerja != null) {
-            setState(() {
-              _currentStep += 1;
-            });
-          } else if (_currentStep == 2) {
-            _submitForm();
-          }
-        },
-        onStepCancel: () {
-          if (_currentStep > 0) {
-            setState(() {
-              _currentStep -= 1;
-            });
-          }
-        },
-        steps: [
-          Step(
-            title: const Text('Isi Data'),
-            content: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _namaController,
-                    decoration: const InputDecoration(labelText: 'Nama'),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Nama tidak boleh kosong' : null,
-                  ),
-                  TextFormField(
-                    controller: _noHpController,
-                    decoration: const InputDecoration(labelText: 'No HP'),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'No HP tidak boleh kosong' : null,
-                  ),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(labelText: 'Password'),
-                    obscureText: true,
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Password tidak boleh kosong' : null,
-                  ),
-                  TextFormField(
-                    controller: _konfirmasiPasswordController,
-                    decoration: const InputDecoration(labelText: 'Konfirmasi Password'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Konfirmasi password tidak boleh kosong';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Password tidak cocok';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _nipController,
-                    decoration: const InputDecoration(labelText: 'NIP'),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'NIP tidak boleh kosong' : null,
-                  ),
-                  TextFormField(
-                    controller: _tempatLahirController,
-                    decoration: const InputDecoration(labelText: 'Tempat Lahir'),
-                    validator: (value) => value == null || value.isEmpty
-                        ? 'Tempat lahir tidak boleh kosong'
-                        : null,
-                  ),
-                  TextFormField(
-                    controller: _tanggalLahirController,
-                    decoration: const InputDecoration(labelText: 'Tanggal Lahir'),
-                    validator: (value) => value == null || value.isEmpty
-                        ? 'Tanggal lahir tidak boleh kosong'
-                        : null,
-                  ),
-                  TextFormField(
-                    controller: _alamatController,
-                    decoration: const InputDecoration(labelText: 'Alamat'),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Alamat tidak boleh kosong' : null,
-                  ),
-                  TextFormField(
-                    controller: _unitKerjaController,
-                    decoration: const InputDecoration(labelText: 'Unit Kerja'),
-                    validator: (value) =>
-                        value == null || value.isEmpty ? 'Unit kerja tidak boleh kosong' : null,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Step(
-            title: const Text('Upload SK Perjanjian Kerja'),
-            content: Column(
+      body: Column(
+        children: [
+          _buildProgressBar(),
+          Expanded(
+            child: PageView(
+              controller: _controller,
+              physics: NeverScrollableScrollPhysics(),
               children: [
-                ElevatedButton(
-                  onPressed: _pickKtpFile,
-                  child: const Text('Pilih File'),
-                ),
-                if (_skPejanjianKerja != null)
-                  Text('File: ${_skPejanjianKerja!.name}'),
+                _buildStep1Form(),
+                _buildStep2Terms(),
+                _buildStep3Verification(),
               ],
-            ),
-          ),
-          Step(
-            title: const Text('Menunggu Persetujuan'),
-            content: const Text(
-              'Akun Anda sedang dalam proses persetujuan oleh pengurus. '
-              'Silakan tunggu konfirmasi lebih lanjut.',
             ),
           ),
         ],
