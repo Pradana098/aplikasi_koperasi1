@@ -8,49 +8,55 @@ import '../config/api_constants.dart';
 class ApiService {
   // Register Function
   Future<Map<String, dynamic>?> register(
-      String name,
-      String noTelepon,
-      String nip,
-      String tempatLahir,
-      String tanggalLahir,
-      String alamat,
-      String unitKerja,
-      String password,
-      File? skKerja,
-      ) async {
-    try {
-      final response = await http.post(
-        Uri.parse(ApiConstants.register),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "name": name,
-          "no_telepon": noTelepon,
-          "nip": nip,
-          "tempat_lahir": tempatLahir,
-          "tanggal_lahir": tanggalLahir,
-          "alamat": alamat,
-          "unit_kerja": unitKerja,
-          "password": password,
-          "sk_kerja": skKerja != null
-              ? base64Encode(skKerja.readAsBytesSync())
-              : null,
-        }),
+    String name,
+    String noTelepon,
+    String nip,
+    String tempatLahir,
+    String tanggalLahir,
+    String alamat,
+    String unitKerja,
+    String password,
+    File? skKerja,
+) async {
+  try {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(ApiConstants.register),
+    );
+
+    request.fields['name'] = name;
+    request.fields['no_telepon'] = noTelepon;
+    request.fields['nip'] = nip;
+    request.fields['tempat_lahir'] = tempatLahir;
+    request.fields['tanggal_lahir'] = tanggalLahir;
+    request.fields['alamat'] = alamat;
+    request.fields['unit_kerja'] = unitKerja;
+    request.fields['password'] = password;
+
+    if (skKerja != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('sk_kerja', skKerja.path),
       );
-
-      final data = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        return data;
-      } else {
-        return {
-          'error': data['message'] ?? "Pendaftaran gagal. Silakan coba lagi.",
-          'statusCode': response.statusCode,
-        };
-      }
-    } catch (e) {
-      return {'error': 'Terjadi kesalahan koneksi.', 'statusCode': 500};
     }
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      return data;
+    } else {
+      return {
+        'error': data['message'] ?? 'Pendaftaran gagal.',
+        'statusCode': response.statusCode,
+      };
+    }
+  } catch (e) {
+    debugPrint('Register error: $e');
+    return {'error': 'Terjadi kesalahan koneksi.', 'statusCode': 500};
   }
+}
 
 
   // Login Function
