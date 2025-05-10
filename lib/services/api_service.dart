@@ -61,7 +61,7 @@ class ApiService {
   }
 
   // Login Function
-  Future<Map<String, dynamic>> login(String nip, String password) async {
+  Future<Map<String, dynamic>?> login(String nip, String password) async {
     try {
       final response = await http.post(
         Uri.parse(ApiConstants.login),
@@ -72,18 +72,18 @@ class ApiService {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        final prefs = await SharedPreferences.getInstance();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['access_token']);
 
-        final user = data['user'];
-        if (user != null) {
-          await prefs.setString('role', user['role'] ?? '');
-          await prefs.setString('status', user['status'] ?? '');
+        if (data['role'] != null) {
+          await prefs.setString('role', data['role']);
         }
 
-        return {'success': true, 'data': data};
+        if (data['status'] != null) {
+          await prefs.setString('status', data['status']);
+        }
+        return data;
       } else {
-        // Ambil message dari Laravel secara langsung
         return {
           'success': false,
           'message': data['message'] ?? 'Login gagal. Silakan coba lagi.',

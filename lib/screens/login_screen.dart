@@ -9,7 +9,6 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 
@@ -20,56 +19,66 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() async {
     setState(() => isLoading = true);
+
+    // Validasi form
+    final nip = nipController.text.trim();
+    final password = passwordController.text.trim();
+
     ApiService apiService = ApiService();
+    final response = await apiService.login(nip, password);
 
+    setState(() => isLoading = false);
 
-      final response = await apiService.login(
-        nipController.text.trim(),
-        passwordController.text.trim(),
+    if (!mounted) return;
+
+    if (response == null) {
+      _showErrorSnackbar('Gagal terhubung ke server.');
+      return;
+    }
+
+    if (response.containsKey('message') && response['access_token'] == null) {
+      _showErrorSnackbar(response['message']);
+      return;
+    }
+
+    if (!response.containsKey('user') || !response.containsKey('access_token')) {
+      _showErrorSnackbar('Login gagal. Data tidak lengkap.');
+      return;
+    }
+
+    final user = response['user'];
+    final token = response['access_token'];
+    final role = user['role'];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    await prefs.setString('role', role);
+
+    if (role == 'pengawas') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PengawasDashboardScreen(data: user),
+        ),
       );
-
-      setState(() => isLoading = false);
-
-      if (!mounted) return;
-
-      // Menangani error jika ada
-      if (response.containsKey('message')) {
-        _showErrorSnackbar(response['message']);
-        return;
-      }
-
-       
-        final role = response['user']['role']; 
-        final token = response['access_token'];
-
-        if (token != null) {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token);
-          await prefs.setString('role', role);
-        }
-        if (role == 'pengawas') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PengawasDashboardScreen(data: response['user']),
-            ),
-          );
-        } else if (role == 'pengurus') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PengurusDashboardScreen(data: response['user']),
-            ),
-          );
-        } else if (role == 'anggota') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AnggotaDashboardScreen(data: response['user']),
-            ),
-          );
-        } 
-      } 
+    } else if (role == 'pengurus') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PengurusDashboardScreen(data: user),
+        ),
+      );
+    } else if (role == 'anggota') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AnggotaDashboardScreen(data: user),
+        ),
+      );
+    } else {
+      _showErrorSnackbar('Role tidak dikenali.');
+    }
+  }
 
   void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -111,13 +120,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      Center(
+                      const Center(
                         child: Text(
                           "Login",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                          ),
+                          style: TextStyle(fontSize: 18, color: Colors.black),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -161,9 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
-                                onPressed: () {
-                                  _login();
-                                },
+                                onPressed: _login,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF4285F4),
                                   shape: RoundedRectangleBorder(
@@ -192,7 +196,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                      
                     ],
                   ),
                 ),
