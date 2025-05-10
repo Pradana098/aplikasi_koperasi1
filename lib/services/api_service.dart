@@ -3,61 +3,62 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_parser/http_parser.dart';
+
+import 'package:path/path.dart'; // Import path package for basename
+import 'package:flutter/foundation.dart'; // Import foundation for kIsWeb
 import '../config/api_constants.dart';
 
 class ApiService {
   // Register Function
-  Future<Map<String, dynamic>?> register(
-    String name,
-    String noTelepon,
-    String nip,
-    String tempatLahir,
-    String tanggalLahir,
-    String alamat,
-    String unitKerja,
-    String password,
-    File? skKerja,
-) async {
-  try {
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse(ApiConstants.register),
-    );
+  Future<bool> registerAnggota({
+    required String name,
+    required String no_telepon,
+    required String password,
+    required String konfirmasi_password,
+    required String nip,
+    required String tempat_lahir,
+    required String tanggal_lahir,
+    required String alamat_rumah,
+    required String unit_kerja,
+    required File sk_perjanjian_kerja,
+  }) async {
+    var uri = Uri.parse(ApiConstants.register);
 
+    var request = http.MultipartRequest('Post', uri);
+    request.headers.addAll({'Content-Type': 'application/json'});
     request.fields['name'] = name;
-    request.fields['no_telepon'] = noTelepon;
-    request.fields['nip'] = nip;
-    request.fields['tempat_lahir'] = tempatLahir;
-    request.fields['tanggal_lahir'] = tanggalLahir;
-    request.fields['alamat'] = alamat;
-    request.fields['unit_kerja'] = unitKerja;
+    request.fields['no_telepon'] = no_telepon;
     request.fields['password'] = password;
-
-    if (skKerja != null) {
+    request.fields['password_confirmation'] = konfirmasi_password;
+    request.fields['nip'] = nip;
+    request.fields['tempat_lahir'] = tempat_lahir;
+    request.fields['tanggal_lahir'] = tanggal_lahir;
+    request.fields['alamat_rumah'] = alamat_rumah;
+    request.fields['unit_kerja'] = unit_kerja;
+    if (kIsWeb) {
+      // Web → gunakan bytes
       request.files.add(
-        await http.MultipartFile.fromPath('sk_kerja', skKerja.path),
+        http.MultipartFile.fromBytes(
+          'sk_perjanjian_kerja',
+          sk_perjanjian_kerja.readAsBytesSync(),
+          filename: basename(sk_perjanjian_kerja.path),
+          contentType: MediaType('application', 'octet-stream'),
+        ),
+      );
+    } else {
+      // Android/iOS → gunakan path
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'sk_perjanjian_kerja',
+          sk_perjanjian_kerja.path,
+          contentType: MediaType('application', 'octet-stream'),
+        ),
       );
     }
-
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
-
-    final data = jsonDecode(response.body);
-
-    if (response.statusCode == 200) {
-      return data;
-    } else {
-      return {
-        'error': data['message'] ?? 'Pendaftaran gagal.',
-        'statusCode': response.statusCode,
-      };
-    }
-  } catch (e) {
-    debugPrint('Register error: $e');
-    return {'error': 'Terjadi kesalahan koneksi.', 'statusCode': 500};
+    final response = await request.send();
+    return response.statusCode == 201;
   }
-}
-
 
   // Login Function
   Future<Map<String, dynamic>?> login(String nip, String password) async {
@@ -143,10 +144,7 @@ class ApiService {
 
     final response = await http.get(
       Uri.parse(endpoint),
-      headers: {
-        "Authorization": "Bearer $token",
-        "Accept": "application/json",
-      },
+      headers: {"Authorization": "Bearer $token", "Accept": "application/json"},
     );
 
     if (response.statusCode == 200) {
@@ -158,31 +156,28 @@ class ApiService {
   }
 
   Future<int?> fetchTotalAnggota() async {
-  try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
 
-    final response = await http.get(
-      Uri.parse(ApiConstants.jumlahAnggotaUrl),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
-    );
+      final response = await http.get(
+        Uri.parse(ApiConstants.jumlahAnggotaUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['total_anggota']; // hanya return datanya
-    } else {
-      debugPrint('Gagal mendapatkan data: ${response.body}');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['total_anggota']; // hanya return datanya
+      } else {
+        debugPrint('Gagal mendapatkan data: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
       return null;
     }
-  } catch (e) {
-    debugPrint('Error: $e');
-    return null;
   }
-}
-
-
-
 }
