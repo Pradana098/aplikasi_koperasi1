@@ -61,7 +61,7 @@ class ApiService {
   }
 
   // Login Function
-  Future<Map<String, dynamic>?> login(String nip, String password) async {
+  Future<Map<String, dynamic>> login(String nip, String password) async {
     try {
       final response = await http.post(
         Uri.parse(ApiConstants.login),
@@ -72,27 +72,30 @@ class ApiService {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
+        final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['access_token']);
 
-        if (data['role'] != null) {
-          await prefs.setString('role', data['role']);
+        final user = data['user'];
+        if (user != null) {
+          await prefs.setString('role', user['role'] ?? '');
+          await prefs.setString('status', user['status'] ?? '');
         }
 
-        if (data['status'] != null) {
-          await prefs.setString('status', data['status']);
-        }
-
-        return data;
+        return {'success': true, 'data': data};
       } else {
-        // jangan throw, cukup return null atau error message
+        // Ambil message dari Laravel secara langsung
         return {
-          'error': data['message'] ?? "Login gagal. Silakan coba lagi.",
+          'success': false,
+          'message': data['message'] ?? 'Login gagal. Silakan coba lagi.',
           'statusCode': response.statusCode,
         };
       }
     } catch (e) {
-      return {'error': 'Terjadi kesalahan koneksi.', 'statusCode': 500};
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+        'statusCode': 500,
+      };
     }
   }
 

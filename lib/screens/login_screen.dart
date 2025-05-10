@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = true);
     ApiService apiService = ApiService();
 
-    try {
+
       final response = await apiService.login(
         nipController.text.trim(),
         passwordController.text.trim(),
@@ -32,12 +32,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
-      if (response != null) {
-        // Menangani error jika ada
-        if (response.containsKey('message')) {
-          _showErrorSnackbar(response['message']);
-          return;
-        }
+      // Menangani error jika ada
+      if (response.containsKey('message')) {
+        _showErrorSnackbar(response['message']);
+        return;
+      }
 
        
         final role = response['user']['role']; 
@@ -69,17 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
               builder: (context) => AnggotaDashboardScreen(data: response['user']),
             ),
           );
-        } else {
-          _showErrorSnackbar("Role tidak dikenali.");
-        }
-      } else {
-        _showErrorSnackbar("Login gagal. Silakan coba lagi.");
-      }
-    } catch (e) {
-      setState(() => isLoading = false);
-      _showErrorSnackbar("Terjadi kesalahan. Silakan coba lagi.");
-    }
-  }
+        } 
+      } 
 
   void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
