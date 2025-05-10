@@ -15,21 +15,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Koperasi Simpan Pinjam',
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(), 
+      home: const HomeScreen(),
       routes: {
         '/login': (context) => const LoginScreen(),
-<<<<<<< HEAD
-        '/register': (context) => RegisterPageViewScreen(),
+        '/register': (context) => const RegisterScreen(),
         '/data-anggota': (context) => DataAnggotaScreen(),
         '/rincian-anggota': (context) => RincianAnggotaScreen(
               nama: "Andi",
               nomor: "0812345678",
               status: "Anggota",
             ),
-=======
-        '/register': (context) => const RegisterScreen(),
->>>>>>> ee332fc652b7e665faa78283f344195bcc4c92f9
       },
     );
-}
+  }
 }
